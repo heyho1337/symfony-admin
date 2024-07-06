@@ -5,7 +5,8 @@ namespace App\Repository;
 use App\Entity\EvcProduct;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Psr\Log\LoggerInterface;
+use App\Service\CacheService;
 /**
  * @extends ServiceEntityRepository<EvcProduct>
  *
@@ -16,33 +17,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EvcProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        protected LoggerInterface $logger,
+        protected CacheService $cacheService
+    ) {
         parent::__construct($registry, EvcProduct::class);
     }
 
-    //    /**
-    //     * @return EvcProduct[] Returns an array of EvcProduct objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?EvcProduct
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function getProducts(): array
+    {
+        return $this->cacheService->getData("products/list", function () {
+            return $this->createQueryBuilder('e')
+                ->orderBy('e.prod_created', 'ASC')
+                ->setMaxResults(100)
+                ->getQuery()
+                ->getResult();
+        },false);
+    }
 }

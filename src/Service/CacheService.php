@@ -33,6 +33,7 @@ class CacheService
     public function getData(string $url, callable $callback, bool $isCached = false)
     {
         if ($isCached) {
+			//$this->logger->info('Cache miss: Fetching data from database');
             $result = $this->cache->get($this->cacheKeyGen($url), $callback);
         } else {
             $result = $callback();

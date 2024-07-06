@@ -13,6 +13,8 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
 		{% endblock %}
+
+		{{ knp_pagination_rel_links(pagination) }}
     </head>
     <body class="has-[.login]:bg-gray-950">
 		{% if app.user %}
