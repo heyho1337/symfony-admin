@@ -1,0 +1,29 @@
+@layer page;
+
+.login{
+	position: fixed;
+	top:50%;
+	left:50%;
+	transform: translate(-50%,-50%);
+	display:grid;
+	grid-row-gap:6px;
+	grid-template-columns: 100%;
+	> div{
+		input{
+			&:-internal-autofill-selected{
+				background: transparent;
+			}
+			&:placeholder-shown ~ label{
+				opacity:0;
+			}
+			&::placeholder{
+				color: inherit;
+				font-size: inherit;
+				font-weight: inherit;
+			}
+		}
+		label{
+			transition: opacity 0.5s ease;
+		}
+	}
+}

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+	
+	{#
+		{% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+	#}
+	
+	<form method="post" class="form login w-full max-w-[400px]">
+        {% if error %}
+			<dialog class="fixed grid gap-y-[6px] inset-0 flex items-center justify-center z-10 px-[30px] py-[12px] rounded-[16px]" open id="login_error_dialog">
+				<p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+				<button
+					class="table hover:bg-gray-950 text-slate-200 transition-colors duration-500 ease-in-out w-min closeButton mt-[6px] mx-auto rounded-full px-[16px] h-[26px] bg-teal-500"
+					onClick={close}>
+					Close
+				</button>
+			</dialog>
+        {% endif %}
+		<div class="relative bg-gray-700">
+			<input type="email" placeholder="Email" value="{{ last_username }}" name="email" id="email" autocomplete="email" class="w-full z-2 bg-transparent border-none p-0 indent-1.5 text-slate-200 text-base h-[40px]" required autofocus>
+			<label
+				class="text-slate-200 text-[10px] absolute z-1 left-1.5 top-[2px] opacity-60 transition-opacity duration-500"
+				for="email">
+				Email
+			</label>
+		</div>
+		<div class="relative bg-gray-700">
+			<input type="password" name="password" id="password" placeholder="Password" autocomplete="current-password" class="w-full z-2 bg-transparent border-none p-0 indent-1.5 text-slate-200 text-base h-[40px]" required>
+			<label
+				class="text-slate-200 text-[10px] absolute z-1 left-1.5 top-[2px] opacity-60 transition-opacity duration-500"
+				for="password">
+				Password
+			</label>
+		</div>
+		<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+		
+		{#
+            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+            See https://symfony.com/doc/current/security/remember_me.html
+
+            <div class="checkbox mb-3">
+                <input type="checkbox" name="_remember_me" id="_remember_me">
+                <label for="_remember_me">Remember me</label>
+            </div>
+        #}
+		
+		<button
+			class="hover:bg-blue-800 transition-colors duration-500 ease-in-out rounded-full px-[32px] h-[30px] bg-sky-600 text-slate-200 w-min mx-auto"
+			type="submit">
+			Login
+		</button>
+	</form>
+{% endblock %}
+

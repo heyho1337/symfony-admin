@@ -1,0 +1,14 @@
+@layer default,custom,hover;
+
+@import "./basic.css" layer(custom);
+@import "./login.css" layer(custom);
+@import "./dialog.css" layer(custom);
+@import "./header.css" layer(custom);
+@import "./loading.css" layer(custom);
+@import "./form.css" layer(custom);
+
+@layer default {
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+}

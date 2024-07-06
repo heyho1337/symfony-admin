@@ -1,0 +1,28 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+    #csrf_protection: true
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session: true
+
+    messenger:
+        routing:
+            #'App\Message\UserMessage': async
+            #'App\Message\ComponentsMessage': async
+
+    cache:
+        pools:
+            my_cache_pool:
+                adapter: cache.adapter.redis
+                default_lifetime: 3600 # Set your desired cache expiration time
+                public: false
+
+    #esi: true
+    #fragments: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

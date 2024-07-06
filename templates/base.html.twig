@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+			{{ encore_entry_link_tags('app') }}
+			<link rel="stylesheet" href="{{ asset('build/app.css') }}">
+		{% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+		{% endblock %}
+    </head>
+    <body class="has-[.login]:bg-gray-950">
+		{% if app.user %}
+			<header class="bg-slate-600 h-[40px] grid grid-cols-[auto,115px] gap-x-3 text-slate-200 items-center px-[12px]">
+				<nav class="flex gap-x-3">
+					{% for comp in components %}
+						<li>
+							<a class="transition duration-500 hover:text-cyan-300" href="/{{comp.compAlias}}" title="">{{comp.compName}}</a>
+						</li>
+					{% endfor %}
+				</nav>
+				<span class="whitespace-nowrap">logged in as <strong>{{ app.user.userIdentifier }}</strong></span>
+				<a href="{{ path('app_logout') }}"
+					class="hover:bg-blue-800 transition-colors duration-500 ease-in-out rounded-full px-[32px] h-[30px] bg-sky-600 text-slate-200 w-min mx-auto"
+					>
+					Logout
+				</a>
+			</header>
+		{% endif %}
+        {% block body %}{% endblock %}
+    </body>
+</html>
