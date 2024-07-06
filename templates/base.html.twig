@@ -20,7 +20,7 @@
 				<nav class="flex gap-x-3">
 					{% for comp in components %}
 						<li>
-							<a class="transition duration-500 hover:text-cyan-300" href="/{{comp.compAlias}}" title="">{{comp.compName}}</a>
+							<a class="transition duration-500 hover:text-cyan-300" href="{{ path(comp.compAlias) }}" title="">{{ comp.compName }}</a>
 						</li>
 					{% endfor %}
 				</nav>

@@ -33,7 +33,7 @@ class EvcComponentsRepository extends ServiceEntityRepository
         parent::__construct($registry, EvcComponents::class);
     }
 
-    public function getComponents()
+    public function getComponents(): array
     {
         return $this->cacheService->getData("components/list", function () {
             $this->logger->info('Cache miss: Fetching data from database');

@@ -25,7 +25,7 @@ class CacheService
         return $cachedData;
     }
 
-    public function cacheKeyGen(string $url)
+    public function cacheKeyGen(string $url): string
     {
         return "{$_ENV['SYMFONY_URL']}{$url}?apikey={$_ENV['API_KEY']}";
     }
