@@ -1,0 +1,23 @@
+{% block choice_widget %}
+    <div class="relative grid h-[40px] items-center">
+        <select class="pt-[11px] indent-[0.3rem] z-1 border border-slate-800 bg-transparent h-full" 
+            id="{{ id }}" 
+            name="{{ full_name }}"
+            {% if required %}required="required"{% endif %}>
+            {% for group_label, choice in choices %}
+                {% if choice is iterable %}
+                    <optgroup label="{{ group_label|trans }}">
+                        {% for child_choice in choice %}
+                            <option value="{{ child_choice.value }}" {% if child_choice.value == data %}selected="selected"{% endif %}>{{ child_choice.label }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% else %}
+                    <option value="{{ choice.value }}" {% if choice.value == data %}selected="selected"{% endif %}>{{ choice.label }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <label class="left-[8px] z-0 absolute font-bold text-[12px] opacity-25 mt-[-20px]" for="{{ id }}">
+            {{ attr.class }}
+        </label>
+    </div>
+{% endblock %}

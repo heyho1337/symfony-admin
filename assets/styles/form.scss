@@ -1,5 +1,3 @@
-@layer component;
-
 .form{
 	div{
 		label{
@@ -17,13 +15,8 @@
 				}
 			}
 		}
-		&:has(input:placeholder-shown){
-			label{
-				opacity:0;
-			}
-		}
-		&:has(:not(input:placeholder-shown)){
-			
+		input:placeholder-shown + label{
+			opacity: 0;
 		}
 	}
 }

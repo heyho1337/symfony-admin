@@ -2,10 +2,12 @@
 
 {% block title %}Products{% endblock %}
 
+{% block head %}{{parent()}} {{ knp_pagination_rel_links(pagination) }}{% endblock %}
+
 {% block body %}
 
 
-<section class="list prodlict">
+<section class="list prodList">
     <h1>Products list</h1>
 	{% for prod in pagination %}
 		<li>

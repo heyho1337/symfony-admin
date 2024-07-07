@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use App\Service\CacheService;
+use Doctrine\ORM\EntityManagerInterface;
 /**
  * @extends ServiceEntityRepository<EvcProduct>
  *
@@ -20,7 +21,8 @@ class EvcProductRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         protected LoggerInterface $logger,
-        protected CacheService $cacheService
+        protected CacheService $cacheService,
+		protected EntityManagerInterface $entityManager
     ) {
         parent::__construct($registry, EvcProduct::class);
     }
@@ -33,6 +35,27 @@ class EvcProductRepository extends ServiceEntityRepository
                 ->setMaxResults(100)
                 ->getQuery()
                 ->getResult();
+        },false);
+    }
+
+	public function getProduct($id): array
+    {
+        return $this->cacheService->getData("product/{$id}", function () use($id) {
+            $product = $this->createQueryBuilder('e')
+				->andWhere('e.prod_id = :val')
+				->setParameter('val', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+			$formTypes = [];
+			$metadata = $this->entityManager->getClassMetadata(EvcProduct::class);
+			foreach ($metadata->fieldMappings as $field => $mapping) {
+				$formTypes[$field] = $mapping['options'] ?? null;
+			}
+		
+			return [
+				'product' => $product,
+				'formTypes' => $formTypes,
+			];
         },false);
     }
 }

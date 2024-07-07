@@ -1,0 +1,21 @@
+{# templates/form/text_custom.html.twig #}
+{% block money_widget %}
+    <div class="relative grid h-[40px] items-center">
+        {# Render the input field #}
+        <input type="text"
+               class="pt-[11px] placeholder-shown:pt-[0px] indent-2 z-1 border border-slate-800 bg-transparent h-full placeholder:text-slate-800"
+               id="{{ id }}"
+               name="{{ full_name }}"
+               {% if required %}required="required"{% endif %}
+               value="{{ value|number_format(0) }}"
+               placeholder="{{ attr.class }}" />
+        <span class="absolute right-[4px]">{{ currency }}</span>
+        {# Render the label #}
+        <label class="left-[8px] z-0 absolute font-bold text-[12px] opacity-25 mt-[-20px]" for="{{ id }}">
+            {{ attr.class }}
+            {% if required %}
+                <span>*</span> {# Optionally mark required fields with an asterisk or other indicator #}
+            {% endif %}
+        </label>
+    </div>
+{% endblock %}

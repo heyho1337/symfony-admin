@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+
+
+<section class="page prodPage">
+    <h1>Products page</h1>
+	<form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto" action="{{ path('app_prod_set', {id: product.prodId}) }}">
+        {{ form_widget(form) }}
+        <button type="submit">Save</button>
+    </form>
+</section>
+{% endblock %}

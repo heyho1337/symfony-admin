@@ -5,31 +5,38 @@ namespace App\Entity;
 use App\Repository\EvcProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+//use Symfony\Component\Form\Extension\Core\Type\TextType;
+//use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+//use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use App\Form\Type\ActiveType;
+use App\Form\Type\TextType;
+use App\Form\Type\DateTimeType;
+use App\Form\Type\MoneyType;
 #[ORM\Entity(repositoryClass: EvcProductRepository::class)]
 class EvcProduct
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
     private ?int $prod_id = null;
 
-    #[ORM\Column(length: 75)]
+    #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $prod_name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["formType" => ActiveType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $prod_active = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["formType" => DateTimeType::class, 'required' => true, 'label' => 'Created'])]
     private ?\DateTimeInterface $prod_created = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["formType" => DateTimeType::class, 'required' => true, 'label' => 'Last edited'])]
     private ?\DateTimeInterface $prod_lastmod = null;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
     private ?float $prod_price = null;
 
-    #[ORM\Column(length: 75)]
+    #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Alias'])]
     private ?string $prod_alias = null;
 
     public function getProdId(): ?int
