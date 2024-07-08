@@ -10,6 +10,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcProductRepository;
 use App\Service\FormService;
 use App\Form\Type\ProductType;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -18,7 +19,8 @@ class ProductController extends AbstractController
 	public function __construct(
         protected EvcProductRepository $prodRepo,
 		protected PaginatorInterface $paginator,
-		protected FormService $formService
+		protected FormService $formService,
+		protected EntityManagerInterface $entityManager
     ) {
 		
     }
@@ -43,16 +45,9 @@ class ProductController extends AbstractController
     public function get($id): Response
     {
 		
-		$product = $this->prodRepo->find($id);
-        if (!$product) {
-            throw $this->createNotFoundException('Product not found');
-        }
-
+		$product = $this->prodRepo->getProduct($id);
         $form = $this->createForm(ProductType::class, $product);
-		
-		//$productData = $this->prodRepo->getProduct($id);
-		//$form = $this->formService->gen($productData);
-		//var_dump($form);
+
 		return $this->render('prod/page.html.twig', [
 			'product' => $product,
 			'form' => $form->createView(),
@@ -62,19 +57,16 @@ class ProductController extends AbstractController
 	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
 	public function save(Request $request, $id): Response
 	{
-		$product = $this->prodRepo->find($id);
-		if (!$product) {
-			throw $this->createNotFoundException('Product not found');
-		}
+		$product = $this->prodRepo->getProduct($id);
+		$form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
 
-		// Update product with form data
-		// Add your logic here to handle the form data and update the product entity
-		// For example:
-		// $product->setProdName($request->request->get('prod_name'));
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
 
-		//$this->prodRepo->save($product); // Ensure your repository has a save method to persist the entity
-
-		return $this->redirectToRoute('app_prod_page', ['id' => $id]);
+            return $this->redirectToRoute('app_prod_page', ['id' => $id]);
+        }
 	}
     
 }

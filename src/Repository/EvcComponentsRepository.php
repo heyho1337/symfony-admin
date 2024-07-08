@@ -31,12 +31,8 @@ class EvcComponentsRepository extends ServiceEntityRepository
     public function getComponents(): array
     {
         return $this->cacheService->getData("components/list", function () {
-            return $this->createQueryBuilder('e')
-                ->andWhere('e.comp_active = :val')
-                ->setParameter('val', '1')
-                ->orderBy('e.comp_sorrend', 'ASC')
-                ->getQuery()
-                ->getResult();
+			$components = $this->findBy(['comp_active' => 1],['comp_sorrend' => 'ASC']);
+            return $components;
         },false);
     }
 }

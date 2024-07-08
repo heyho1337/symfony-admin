@@ -29,33 +29,22 @@ class EvcProductRepository extends ServiceEntityRepository
 
     public function getProducts(): array
     {
-        return $this->cacheService->getData("products/list", function () {
-            return $this->createQueryBuilder('e')
-                ->orderBy('e.prod_created', 'ASC')
-                ->setMaxResults(100)
-                ->getQuery()
-                ->getResult();
+        $products = $this->cacheService->getData("products/list", function () {
+			$products = $this->findBy(criteria: [],orderBy: ['prod_created' => 'ASC'],limit:100);
+            return $products;
         },false);
+		return $products;
     }
 
-	public function getProduct($id): array
+	public function getProduct($id): EvcProduct
     {
-        return $this->cacheService->getData("product/{$id}", function () use($id) {
-            $product = $this->createQueryBuilder('e')
-				->andWhere('e.prod_id = :val')
-				->setParameter('val', $id)
-                ->getQuery()
-                ->getOneOrNullResult();
-			$formTypes = [];
-			$metadata = $this->entityManager->getClassMetadata(EvcProduct::class);
-			foreach ($metadata->fieldMappings as $field => $mapping) {
-				$formTypes[$field] = $mapping['options'] ?? null;
-			}
-		
-			return [
-				'product' => $product,
-				'formTypes' => $formTypes,
-			];
+        $product = $this->cacheService->getData("product/{$id}", function () use($id) {
+			$product = $this->find($id);
+			return $product;
         },false);
+		if (!$product) {
+			throw $this->createNotFoundException('Product not found');
+		}
+		return $product;
     }
 }

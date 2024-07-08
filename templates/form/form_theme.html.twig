@@ -1,0 +1,8 @@
+{# templates/form_theme.html.twig #}
+{% block form_row %}
+        {% if compound %}
+            {{- form_label(form) -}}
+        {% endif %}
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+{% endblock form_row %}

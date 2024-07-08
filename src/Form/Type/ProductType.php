@@ -9,8 +9,7 @@ use App\Service\FormService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcProduct;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Form\Type\ActiveType;
-use App\Form\Type\TextFormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProductType extends AbstractType
 {
@@ -23,25 +22,7 @@ class ProductType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $formTypes = [];
-        $metadata = $this->entityManager->getClassMetadata(EvcProduct::class);
-
-        foreach ($metadata->fieldMappings as $field => $mapping) {
-            if (isset($mapping['options']['formType'])) {
-                $formTypeClass = $mapping['options']['formType'];
-                $formTypes[$field] = $mapping['options'];
-				if (class_exists($formTypeClass)) {
-					$builder->add($field, $formTypeClass, [
-						'required' => $formTypes[$field]['required'],
-						'attr' => [
-							'class' => $formTypes[$field]['label']
-						]
-					]);
-                } else {
-                    throw new \InvalidArgumentException(sprintf('Form type class "%s" does not exist.', $formTypeClass));
-                }
-            }
-        }
+        $this->formService->buildFormType($builder, EvcProduct::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

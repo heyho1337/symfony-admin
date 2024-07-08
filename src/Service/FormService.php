@@ -1,63 +1,40 @@
 <?php
 
-// src/Service/FormService.php
-
 namespace App\Service;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-class FormService extends AbstractController
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+class FormService
 {
-    
-	public array $form = [];
-	
-	public function __construct()
+    protected EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
     }
 
-	public function text(string $value, string $name, array $el): string
+    public function buildFormType(FormBuilderInterface $builder, string $entityClass): void
     {
-		return $this->renderView('form/text.html.twig', [
-			'value' => $value,
-			'name' => $name,
-			'el' => $el
-        ]);
-    }
-
-	public function hidden(string $value, string $name, array $el)
-    {
-		
-    }
-
-	public function active(string $value, string $name, array $el)
-    {
-		
-    }
-
-	public function datetime(\DateTime $value, string $name, array $el)
-    {
-		
-    }
-
-	public function price(string $value, string $name, array $el)
-    {
-		
-    }
-
-	public function gen($data): array
-    {
-        $product = $data['product'];
-        $reflection = new \ReflectionClass($product);
-        foreach ($data['formTypes'] as $field => $metaData) {
-            $getter = 'get' . str_replace('_', '', ucwords($field, '_'));
-            if ($reflection->hasMethod($getter)) {
-                $value = $product->{$getter}();
-                $formRow = $this->{$metaData['formType']}($value, $field, $metaData);
-                array_push($this->form, $formRow);
+        $metadata = $this->entityManager->getClassMetadata($entityClass);
+        foreach ($metadata->fieldMappings as $field => $mapping) {
+            if (isset($mapping['options']['formType'])) {
+                $formTypeClass = $mapping['options']['formType'];
+                if (class_exists($formTypeClass)) {
+                    $builder->add($field, $formTypeClass, [
+                        'required' => $mapping['options']['required'] ?? false,
+                        'attr' => [
+                            'class' => $mapping['options']['label'] ?? ''
+                        ]
+                    ]);
+                } else {
+                    throw new \InvalidArgumentException(sprintf('Form type class "%s" does not exist.', $formTypeClass));
+                }
             }
         }
-
-        return $this->form;
+		$builder->add('save', SubmitType::class, [
+            'label' => 'Save',
+        ]);
     }
 }
+

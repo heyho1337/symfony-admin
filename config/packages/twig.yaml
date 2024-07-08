@@ -5,6 +5,7 @@ twig:
         - 'form/datetime_custom.html.twig'
         - 'form/active_custom.html.twig'
         - 'form/money_custom.html.twig'
+        - 'form/form_theme.html.twig'
     debug: '%kernel.debug%'
 
 when@test:
