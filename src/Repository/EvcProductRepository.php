@@ -20,14 +20,20 @@ class EvcProductRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        protected LoggerInterface $logger,
-        protected CacheService $cacheService,
-		protected EntityManagerInterface $entityManager
+        //protected LoggerInterface $logger,
+        //protected CacheService $cacheService,
+		//protected EntityManagerInterface $entityManager
     ) {
         parent::__construct($registry, EvcProduct::class);
     }
 
-    public function getProducts(): array
+	public function getProducts(): array
+    {
+		return $this->findBy(criteria: [],orderBy: ['prod_created' => 'ASC'],limit:100);
+    }
+
+    /*
+	public function getProducts(): array
     {
         $products = $this->cacheService->getData("products/list", function () {
 			$products = $this->findBy(criteria: [],orderBy: ['prod_created' => 'ASC'],limit:100);
@@ -47,4 +53,5 @@ class EvcProductRepository extends ServiceEntityRepository
 		}
 		return $product;
     }
+	*/
 }

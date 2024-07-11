@@ -11,25 +11,23 @@ use App\Repository\EvcProductRepository;
 use App\Service\FormService;
 use App\Form\Type\ProductType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\EvcProduct;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
 {
     
 	public function __construct(
-        protected EvcProductRepository $prodRepo,
-		protected PaginatorInterface $paginator,
-		protected FormService $formService,
-		protected EntityManagerInterface $entityManager
+        
     ) {
 		
     }
 	
 	#[Route('', name: 'list')]
-    public function list(Request $request): Response
+    public function list(Request $request, PaginatorInterface $paginator, EvcProductRepository $prodRepo): Response
     {
-		$products = $this->prodRepo->getProducts();
-		$pagination = $this->paginator->paginate(
+		$products = $prodRepo->getProducts();
+		$pagination = $paginator->paginate(
 			$products, /* query NOT result */
 			$request->query->getInt('page', 1), /*page number*/
 			10 /*limit per page*/
@@ -42,10 +40,8 @@ class ProductController extends AbstractController
     }
 
 	#[Route('/{id}', name: 'page')]
-    public function get($id): Response
+    public function get($id, EvcProduct $product): Response
     {
-		
-		$product = $this->prodRepo->getProduct($id);
         $form = $this->createForm(ProductType::class, $product);
 
 		return $this->render('prod/page.html.twig', [
@@ -55,15 +51,14 @@ class ProductController extends AbstractController
     }
 
 	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $id): Response
+	public function save(Request $request, $id, EntityManagerInterface $entityManager, EvcProduct $product): Response
 	{
-		$product = $this->prodRepo->getProduct($id);
 		$form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
+            $entityManager->persist($product);
+            $entityManager->flush();
 
             return $this->redirectToRoute('app_prod_page', ['id' => $id]);
         }

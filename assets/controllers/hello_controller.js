@@ -11,6 +11,6 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     connect() {
-        this.element.textContent = 'gyasz';
+        this.element.textContent = 'gyasz kalacs';
     }
 }
