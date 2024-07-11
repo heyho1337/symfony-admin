@@ -14,17 +14,6 @@ class CacheService
     {
     }
 
-    public function setData($key, $data)
-    {
-        $cachedData = $this->cache->get($key, function (ItemInterface $item) use ($data) {
-            //$item->expiresAfter((int)$_ENV['CACHE']);
-            $this->logger->info('Cache miss: Setting data to cache');
-            return $data;
-        });
-
-        return $cachedData;
-    }
-
     public function cacheKeyGen(string $url): string
     {
         return "{$_ENV['SYMFONY_URL']}{$url}?apikey={$_ENV['API_KEY']}";

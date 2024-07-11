@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Component{% endblock %}
+
+{% block body %}
+
+
+<section class="page prodPage">
+    <h1>Component page</h1>
+	<form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto" action="{{ path('app_component_set', {id: component.compId}) }}">
+        {{ form_widget(form) }}
+    </form>
+</section>
+{% endblock %}

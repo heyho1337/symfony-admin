@@ -14,7 +14,7 @@ services:
     
     App\Service\TwigService:
         arguments:
-            $compRepo: '@App\Repository\EvcComponentsRepository'
+            $compRepo: '@App\Repository\EvcComponentRepository'
         tags:
             - { name: twig.extension }
     

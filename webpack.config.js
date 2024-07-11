@@ -22,10 +22,13 @@ Encore
      */
 	.addEntry('app', './assets/app.js')
 	
-	.addStyleEntry('tailwind', './public/build/app.css')
+	
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
+
+    // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+    .enableStimulusBridge('./assets/controllers.json')
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
@@ -55,7 +58,7 @@ Encore
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
         config.corejs = '3.23';
-    })
+	})
 
     // enables Sass/SCSS support
     //.enableSassLoader()

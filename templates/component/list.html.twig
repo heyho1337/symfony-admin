@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Components{% endblock %}
+
+{% block head %}{{parent()}} {{ knp_pagination_rel_links(pagination) }}{% endblock %}
+
+{% block body %}
+
+
+<section class="list compList">
+    <h1>Component list</h1>
+	{% for comp in pagination %}
+		<li>
+			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_component_page', {id: comp.compId}) }}" title="">
+				{{ comp.compName }}
+			</a>
+		</li>
+	{% endfor %}
+	<div class="navigation">
+		{{ knp_pagination_render(pagination) }}
+	</div>
+</section>
+{% endblock %}

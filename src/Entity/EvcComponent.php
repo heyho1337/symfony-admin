@@ -2,29 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\EvcComponentsRepository;
+use App\Repository\EvcComponentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use App\Form\Type\ActiveType;
+use App\Form\Type\TextType;
+use App\Form\Type\DateTimeType;
+use App\Form\Type\MoneyType;
 
-#[ORM\Entity(repositoryClass: EvcComponentsRepository::class)]
-class EvcComponents
+#[ORM\Entity(repositoryClass: EvcComponentRepository::class)]
+class EvcComponent
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+	#[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
     private ?int $comp_id = null;
 
-
-    #[ORM\Column(length: 75)]
+    #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $comp_name = null;
 
-    #[ORM\Column]
-    private ?int $comp_active = null;
+	#[ORM\Column(options: ["formType" => ActiveType::class, 'required' => true, 'label' => 'Active'])]
+	private ?int $comp_active = null;
 
-    #[ORM\Column(length: 75)]
+    #[ORM\Column(length: 75, options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'app route name'])]
     private ?string $comp_alias = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, options: ["formType" => TextType::class, 'required' => false, 'label' => 'Order'])]
     private ?int $comp_sorrend = null;
+
+    #[ORM\Column(length: 255, options: ["formType" => HiddenType::class, 'required' => false, 'label' => 'Alias'])]
+    private ?string $comp_url = null;
 
     public function getCompId(): ?int
     {
@@ -82,6 +90,18 @@ class EvcComponents
     public function setCompSorrend(?int $comp_sorrend): static
     {
         $this->comp_sorrend = $comp_sorrend;
+
+        return $this;
+    }
+
+    public function getCompUrl(): ?string
+    {
+        return $this->comp_url;
+    }
+
+    public function setCompUrl(string $comp_url): static
+    {
+        $this->comp_url = $comp_url;
 
         return $this;
     }

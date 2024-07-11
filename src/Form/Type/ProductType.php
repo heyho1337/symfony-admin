@@ -9,7 +9,6 @@ use App\Service\FormService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcProduct;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProductType extends AbstractType
 {
