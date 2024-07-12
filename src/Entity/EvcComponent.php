@@ -4,12 +4,9 @@ namespace App\Entity;
 
 use App\Repository\EvcComponentRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use App\Form\Type\ActiveType;
 use App\Form\Type\TextType;
-use App\Form\Type\DateTimeType;
-use App\Form\Type\MoneyType;
+use App\Form\Type\OnOffType;
 
 #[ORM\Entity(repositoryClass: EvcComponentRepository::class)]
 class EvcComponent
@@ -22,7 +19,7 @@ class EvcComponent
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $comp_name = null;
 
-	#[ORM\Column(options: ["formType" => ActiveType::class, 'required' => true, 'label' => 'Active'])]
+	#[ORM\Column(options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
 	private ?int $comp_active = null;
 
     #[ORM\Column(length: 75, options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'app route name'])]

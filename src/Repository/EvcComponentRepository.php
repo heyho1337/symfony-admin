@@ -22,8 +22,8 @@ class EvcComponentRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        protected LoggerInterface $logger,
-        protected CacheService $cacheService
+        //protected LoggerInterface $logger,
+        //protected CacheService $cacheService
     ) {
         parent::__construct($registry, EvcComponent::class);
     }

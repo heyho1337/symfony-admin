@@ -8,10 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcComponentRepository;
-use App\Service\FormService;
 use App\Form\Type\ComponentType;
 use App\Entity\EvcComponent;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/component', name: 'app_component_')]
 class ComponentController extends AbstractController
@@ -39,13 +40,20 @@ class ComponentController extends AbstractController
     }
 
 	#[Route('/{id}', name: 'page')]
-    public function get($id, EvcComponent $component): Response
+    public function get($id, EvcComponentRepository $compRepo, SessionInterface $session): Response
     {
-        $form = $this->createForm(ComponentType::class, $component);
+		$component = $compRepo->find($id);
+		if (!$component) {
+			throw $this->createNotFoundException('Component not found');
+		}
+		
+        $flashMessages = $session->getFlashBag()->all();
+		$form = $this->createForm(ComponentType::class, $component, ['attr' => ['id' => $id]]);
 
 		return $this->render('component/page.html.twig', [
 			'component' => $component,
 			'form' => $form->createView(),
+			'msg' => $flashMessages
         ]);
     }
 
@@ -58,7 +66,30 @@ class ComponentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($component);
             $entityManager->flush();
+
+			$this->addFlash('notice','Saved successfully');
+
             return $this->redirectToRoute('app_component_page', ['id' => $id]);
         }
 	}
+
+	#[Route('/{id}/onoff', name: 'onoff', methods: ['POST'])]
+    public function onoff($id, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $component = $entityManager->getRepository(EvcComponent::class)->find($id);
+
+        if (!$component) {
+            return new JsonResponse(['success' => false, 'error' => 'Component not found'], 404);
+        }
+		$activeStatus = $component->getCompActive();
+		if($activeStatus == 1){ 
+        	$component->setCompActive(0);
+		}
+		else{
+			$component->setCompActive(1);
+		}
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'result' => $component->getCompActive()]);
+    }
 }

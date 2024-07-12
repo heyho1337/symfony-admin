@@ -14,19 +14,29 @@ class FormService
         $this->entityManager = $entityManager;
     }
 
-    public function buildFormType(FormBuilderInterface $builder, string $entityClass): void
+    public function buildFormType(FormBuilderInterface $builder, string $entityClass, int $id = null): void
     {
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         foreach ($metadata->fieldMappings as $field => $mapping) {
             if (isset($mapping['options']['formType'])) {
                 $formTypeClass = $mapping['options']['formType'];
                 if (class_exists($formTypeClass)) {
-                    $builder->add($field, $formTypeClass, [
-                        'required' => $mapping['options']['required'] ?? false,
-                        'attr' => [
-                            'class' => $mapping['options']['label'] ?? ''
-                        ]
-                    ]);
+					switch($formTypeClass){
+						case 'App\Form\Type\OnOffType':
+							$builder->add($field, $formTypeClass, [
+								'label' => $mapping['options']['label'] ?? '',
+								'attr' => [
+									'entityId' => $id
+								],
+							]);
+
+							break;
+						default:
+							$builder->add($field, $formTypeClass, [
+								'label' => $mapping['options']['label'],
+								'required' => $mapping['options']['required'] ?? false,
+							]);
+					}
                 } else {
                     throw new \InvalidArgumentException(sprintf('Form type class "%s" does not exist.', $formTypeClass));
                 }

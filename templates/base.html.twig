@@ -17,12 +17,24 @@
             
 		{% endblock %}
     </head>
+	{% if msg is defined and msg is not empty %}
+		<div class="dialogContainer">
+            {% for type, messages in msg %}
+                {% for message in messages %}
+                    <dialog data-controller="dialog" data-dialog-target="dialog" style="font-size: 14px; display: table;" open>
+						<p>{{ message }}</p>
+						<form data-action="dialog#close" method="dialog">
+							<button type="submit">OK</button>
+						</form>
+					</dialog>
+                {% endfor %}
+            {% endfor %}
+        </div>
+	{% endif %}
+
     <body class="has-[.login]:bg-gray-950">
-		{# <div {{ stimulus_controller('hello') }}>
-			...
-		</div> #}
 		{% if app.user %}
-			<header class="bg-slate-600 h-[40px] grid grid-cols-[auto,115px] gap-x-3 text-slate-200 items-center px-[12px]">
+			<header class="bg-gray-800 h-[40px] grid grid-cols-[auto,115px] gap-x-3 text-gray-200 items-center px-[12px]">
 				<nav class="flex gap-x-3">
 					{% for comp in components %}
 						{% if comp.compAlias != 'app_component_list' or is_granted('ROLE_ADMIN') %}

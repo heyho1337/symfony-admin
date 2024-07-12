@@ -1,4 +1,4 @@
-{% block choice_widget %}
+{% block custom_select_widget %}
     <div class="relative grid h-[40px] items-center">
         <select class="pt-[11px] indent-[0.3rem] z-1 border border-slate-800 bg-transparent h-full" 
             id="{{ id }}" 
@@ -17,7 +17,7 @@
             {% endfor %}
         </select>
         <label class="left-[8px] z-0 absolute font-bold text-[12px] opacity-25 mt-[-20px]" for="{{ id }}">
-            {{ attr.class }}
+            {{ label }}
         </label>
     </div>
 {% endblock %}

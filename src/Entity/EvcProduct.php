@@ -6,7 +6,7 @@ use App\Repository\EvcProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use App\Form\Type\ActiveType;
+use App\Form\Type\SelectType;
 use App\Form\Type\TextType;
 use App\Form\Type\DateTimeType;
 use App\Form\Type\MoneyType;
@@ -21,7 +21,7 @@ class EvcProduct
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $prod_name = null;
 
-    #[ORM\Column(options: ["formType" => ActiveType::class, 'required' => true, 'label' => 'Active'])]
+    #[ORM\Column(options: ["formType" => SelectType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $prod_active = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["formType" => DateTimeType::class, 'required' => true, 'label' => 'Created'])]

@@ -25,3 +25,9 @@ services:
     App\Service\FormService:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
+    
+    App\Form\Type\OnOffType:
+        tags: ['form.type']
+
+    App\Form\Type\SelectType:
+        tags: ['form.type']

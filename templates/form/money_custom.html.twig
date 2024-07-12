@@ -8,11 +8,11 @@
                name="{{ full_name }}"
                {% if required %}required="required"{% endif %}
                value="{{ value|number_format(0) }}"
-               placeholder="{{ attr.class }}" />
+               placeholder="{{ label }}" />
         <span class="absolute right-[4px]">{{ currency }}</span>
         {# Render the label #}
         <label class="left-[8px] z-0 absolute font-bold text-[12px] opacity-25 mt-[-20px]" for="{{ id }}">
-            {{ attr.class }}
+            {{ label }}
             {% if required %}
                 <span>*</span> {# Optionally mark required fields with an asterisk or other indicator #}
             {% endif %}

@@ -1,1 +1,1 @@
-.form div label{grid-row:1;grid-column:1}.form div input,.form div select{grid-row:1;grid-column:1}.form div:has(select):has(:not(option:checked(:first-child))) label{opacity:0}.form div input:-moz-placeholder-shown+label{opacity:0}.form div input:-ms-input-placeholder+label{opacity:0}.form div input:placeholder-shown+label{opacity:0}/*# sourceMappingURL=form.css.map */
+/*# sourceMappingURL=form.css.map */

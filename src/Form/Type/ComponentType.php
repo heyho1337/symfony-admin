@@ -21,7 +21,7 @@ class ComponentType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $this->formService->buildFormType($builder, EvcComponent::class);
+        $this->formService->buildFormType($builder, EvcComponent::class, $options['attr']['id']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

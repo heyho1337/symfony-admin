@@ -40,10 +40,15 @@ class ProductController extends AbstractController
     }
 
 	#[Route('/{id}', name: 'page')]
-    public function get($id, EvcProduct $product): Response
+    public function get($id, EvcProductRepository $prodRepo): Response
     {
-        $form = $this->createForm(ProductType::class, $product);
+        $product = $prodRepo->find($id);
+		if (!$product) {
+			throw $this->createNotFoundException('Product not found');
+		}
 
+		$form = $this->createForm(ProductType::class, $product);
+		
 		return $this->render('prod/page.html.twig', [
 			'product' => $product,
 			'form' => $form->createView(),
