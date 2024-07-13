@@ -65,6 +65,7 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
             'Symfonycasts\\TailwindBundle\\' => 28,
             'Symfony\\WebpackEncoreBundle\\' => 28,
             'Symfony\\UX\\StimulusBundle\\' => 26,
+            'Symfony\\UX\\Autocomplete\\' => 24,
             'Symfony\\Runtime\\Symfony\\Component\\' => 34,
             'Symfony\\Polyfill\\Php83\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -253,6 +254,10 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         'Symfony\\UX\\StimulusBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/stimulus-bundle/src',
+        ),
+        'Symfony\\UX\\Autocomplete\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/ux-autocomplete/src',
         ),
         'Symfony\\Runtime\\Symfony\\Component\\' => 
         array (

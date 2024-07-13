@@ -13,7 +13,7 @@ class TwigService extends AbstractExtension implements GlobalsInterface
     public function __construct(EvcComponentRepository $compRepo)
     {
         // Fetch the components from the repository
-        $this->components = $compRepo->getComponents();
+        $this->components = $compRepo->getActiveComponents();
     }
 
     public function getGlobals(): array

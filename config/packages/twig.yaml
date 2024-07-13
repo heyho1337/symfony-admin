@@ -4,6 +4,7 @@ twig:
         - 'form/text_custom.html.twig'
         - 'form/datetime_custom.html.twig'
         - 'form/select_custom.html.twig'
+        - 'form/multiselect_custom.html.twig'
         - 'form/money_custom.html.twig'
         - 'form/form_theme.html.twig'
         - 'form/onoff_custom.html.twig'

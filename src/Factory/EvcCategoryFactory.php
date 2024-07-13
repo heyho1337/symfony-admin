@@ -2,28 +2,26 @@
 
 namespace App\Factory;
 
-use App\Entity\EvcProduct;
 use App\Entity\EvcCategory;
-use App\Factory\EvcCategoryFactory;
-use App\Repository\EvcCategoryRepository;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+
 /**
- * @extends PersistentProxyObjectFactory<EvcProduct>
+ * @extends PersistentProxyObjectFactory<EvcCategory>
  */
-final class EvcProductFactory extends PersistentProxyObjectFactory
+final class EvcCategoryFactory extends PersistentProxyObjectFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
      *
      * @todo inject services if required
      */
-    public function __construct(private EvcCategoryRepository $categRepo)
+    public function __construct()
     {
     }
 
     public static function class(): string
     {
-        return EvcProduct::class;
+        return EvcCategory::class;
     }
 
     /**
@@ -34,9 +32,9 @@ final class EvcProductFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'prod_active' => 1,
-            'prod_name' => self::faker()->text(75),
-            'prod_price' => self::faker()->randomFloat(0,1000),
+            'category_active' => 1,
+            'category_name' => self::faker()->text(20),
+			'category_description' => self::faker()->text(200),
         ];
     }
 
@@ -46,12 +44,7 @@ final class EvcProductFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            ->afterInstantiate(function(EvcProduct $evcProduct): void {
-				EvcCategoryFactory::createMany(30);
-				$categories = $this->categRepo->getRandomCategories();
-                foreach ($categories as $category) {
-                    $evcProduct->addProdCategory($category);
-                }
-            });
+            // ->afterInstantiate(function(EvcCategory $evcCategory): void {})
+        ;
     }
 }

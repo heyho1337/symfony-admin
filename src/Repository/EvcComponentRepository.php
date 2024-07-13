@@ -28,7 +28,7 @@ class EvcComponentRepository extends ServiceEntityRepository
         parent::__construct($registry, EvcComponent::class);
     }
     
-	public function getComponents(): array
+	public function getActiveComponents(): array
     {
         return $this->findBy(['comp_active' => 1],['position' => 'ASC']);
     }
@@ -48,7 +48,7 @@ class EvcComponentRepository extends ServiceEntityRepository
     }
 	
 	/*
-	public function getComponents(): array
+	public function getActiveComponents(): array
     {
         return $this->cacheService->getData("components/list", function () {
 			$components = $this->findBy(['comp_active' => 1],['position' => 'ASC']);

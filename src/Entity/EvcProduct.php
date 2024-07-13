@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EvcProductRepository;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\Form\Type\SelectType;
@@ -20,7 +21,7 @@ class EvcProduct
 	#[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
-    private ?int $prod_id = null;
+    private ?int $id = null;
 
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $prod_name = null;
@@ -35,17 +36,20 @@ class EvcProduct
 	#[ORM\Column(length: 100, unique: true, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Url'])]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, EvcCategory>
+     */
+    #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
+    private Collection $prod_category;
 
-    public function getProdId(): ?int
+    public function __construct()
     {
-        return $this->prod_id;
+        $this->prod_category = new ArrayCollection();
     }
 
-    public function setProdId(int $prod_id): static
+    public function getId(): ?int
     {
-        $this->prod_id = $prod_id;
-
-        return $this;
+        return $this->id;
     }
 
     public function getProdName(): ?string
@@ -92,6 +96,30 @@ class EvcProduct
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EvcCategory>
+     */
+    public function getProdCategory(): Collection
+    {
+        return $this->prod_category;
+    }
+
+    public function addProdCategory(EvcCategory $prodCategory): static
+    {
+        if (!$this->prod_category->contains($prodCategory)) {
+            $this->prod_category->add($prodCategory);
+        }
+
+        return $this;
+    }
+
+    public function removeProdCategory(EvcCategory $prodCategory): static
+    {
+        $this->prod_category->removeElement($prodCategory);
 
         return $this;
     }

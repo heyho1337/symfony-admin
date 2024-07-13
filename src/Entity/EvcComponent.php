@@ -19,7 +19,7 @@ class EvcComponent
 	#[ORM\Id]
     #[ORM\GeneratedValue]
 	#[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
-    private ?int $comp_id = null;
+    private ?int $id = null;
 
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $comp_name = null;
@@ -34,16 +34,9 @@ class EvcComponent
     #[ORM\Column(nullable: true, options: ["formType" => TextType::class, 'required' => false, 'label' => 'Order'])]
     private ?int $position = null;
 
-    public function getCompId(): ?int
+    public function getId(): ?int
     {
-        return $this->comp_id;
-    }
-
-    public function setCompId(int $comp_id): static
-    {
-        $this->comp_id = $comp_id;
-
-        return $this;
+        return $this->id;
     }
 
     public function getCompName(): ?string

@@ -11,9 +11,9 @@
     <h1>Component list</h1>
 	<ul data-controller="sort" data-sort-route-value="component">
 		{% for comp in pagination %}
-			<li draggable="true" data-sort-target="sortItem" rel="{{ comp.compId }}">
+			<li draggable="true" data-sort-target="sortItem" rel="{{ comp.Id }}">
 				<i class="fa-solid fa-bars"></i>
-				<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_component_page', {id: comp.compId}) }}" title="">
+				<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_component_page', {id: comp.Id}) }}" title="">
 					{{ comp.compName }}
 				</a>
 			</li>

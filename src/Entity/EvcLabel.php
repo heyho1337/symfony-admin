@@ -11,7 +11,7 @@ class EvcLabel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $label_id = null;
+    private ?int $id = null;
 
 
     #[ORM\Column(length: 75)]
@@ -20,9 +20,9 @@ class EvcLabel
     #[ORM\Column(length: 75)]
     private ?string $label_value = null;
 
-    public function getLabelId(): ?int
+    public function getId(): ?int
     {
-        return $this->label_id;
+        return $this->id;
     }
 
     public function getLabelName(): ?string

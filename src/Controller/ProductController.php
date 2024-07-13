@@ -8,10 +8,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcProductRepository;
-use App\Service\FormService;
+use App\Repository\EvcCategoryRepository;
 use App\Form\Type\ProductType;
+use App\Form\Type\MultiSelectType;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\EvcProduct;
+use App\Entity\EvcCategory;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -28,23 +31,32 @@ class ProductController extends AbstractController
     {
 		$products = $prodRepo->getProducts();
 		$pagination = $paginator->paginate(
-			$products, /* query NOT result */
-			$request->query->getInt('page', 1), /*page number*/
-			10 /*limit per page*/
+			$products,
+			$request->query->getInt('page', 1),
+			10
 		);
 
-		//add the $products to the pagination;
 		return $this->render('prod/list.html.twig', [
 			'pagination' => $pagination
         ]);
     }
 
 	#[Route('/{slug}', name: 'page')]
-    public function get($slug, EvcProductRepository $prodRepo): Response
+    public function get($slug, EvcProductRepository $prodRepo, EvcCategoryRepository $categRepo): Response
     {
         $product = $prodRepo->getProductBySlug($slug);
-
+		
 		$form = $this->createForm(ProductType::class, $product);
+		$form->add('prod_category', EntityType::class, [
+			'class' => EvcCategory::class,
+			'choice_label' => 'categoryName',
+			'label' => 'Categories',
+			'disabled' => false,
+			'required' => true,
+			'multiple' => true,
+			'expanded' => false,
+			'autocomplete' => true,
+		]);
 		
 		return $this->render('prod/page.html.twig', [
 			'product' => $product,
