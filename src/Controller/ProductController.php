@@ -39,13 +39,10 @@ class ProductController extends AbstractController
         ]);
     }
 
-	#[Route('/{id}', name: 'page')]
-    public function get($id, EvcProductRepository $prodRepo): Response
+	#[Route('/{slug}', name: 'page')]
+    public function get($slug, EvcProductRepository $prodRepo): Response
     {
-        $product = $prodRepo->find($id);
-		if (!$product) {
-			throw $this->createNotFoundException('Product not found');
-		}
+        $product = $prodRepo->getProductBySlug($slug);
 
 		$form = $this->createForm(ProductType::class, $product);
 		
@@ -55,9 +52,12 @@ class ProductController extends AbstractController
         ]);
     }
 
-	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $id, EntityManagerInterface $entityManager, EvcProduct $product): Response
+	#[Route('/set/{slug}', name: 'set', methods: ['POST'])]
+	public function save(Request $request, $slug, EntityManagerInterface $entityManager, EvcProductRepository $prodRepo): Response
 	{
+		
+		$product = $prodRepo->getProductBySlug($slug);
+
 		$form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
@@ -65,7 +65,7 @@ class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_prod_page', ['id' => $id]);
+            return $this->redirectToRoute('app_prod_page', ['id' => $slug]);
         }
 	}
     

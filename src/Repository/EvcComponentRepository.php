@@ -30,19 +30,28 @@ class EvcComponentRepository extends ServiceEntityRepository
     
 	public function getComponents(): array
     {
-        return $this->findBy(['comp_active' => 1],['comp_sorrend' => 'ASC']);
+        return $this->findBy(['comp_active' => 1],['position' => 'ASC']);
     }
 
 	public function getAllComponents(): array
     {
-        return $this->findAll();
+        return $this->findBy([],['position' => 'ASC']);
+    }
+
+	public function getComponent(int $id): EvcComponent
+    {
+		$component = $this->find($id);
+		if (!$component) {
+			throw $this->createNotFoundException('Component not found');
+		}
+		return $component;
     }
 	
 	/*
 	public function getComponents(): array
     {
         return $this->cacheService->getData("components/list", function () {
-			$components = $this->findBy(['comp_active' => 1],['comp_sorrend' => 'ASC']);
+			$components = $this->findBy(['comp_active' => 1],['position' => 'ASC']);
             return $components;
         },false);
     }

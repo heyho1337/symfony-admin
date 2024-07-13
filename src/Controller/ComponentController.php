@@ -42,10 +42,7 @@ class ComponentController extends AbstractController
 	#[Route('/{id}', name: 'page')]
     public function get($id, EvcComponentRepository $compRepo, SessionInterface $session): Response
     {
-		$component = $compRepo->find($id);
-		if (!$component) {
-			throw $this->createNotFoundException('Component not found');
-		}
+		$component = $compRepo->getComponent($id);
 		
         $flashMessages = $session->getFlashBag()->all();
 		$form = $this->createForm(ComponentType::class, $component, ['attr' => ['id' => $id]]);
@@ -58,8 +55,10 @@ class ComponentController extends AbstractController
     }
 
 	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $id, EvcComponent $component, EntityManagerInterface $entityManager): Response
+	public function save(Request $request, $id, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager): Response
 	{
+		$component = $compRepo->getComponent($id);
+		
 		$form = $this->createForm(ComponentType::class, $component);
         $form->handleRequest($request);
 
@@ -73,14 +72,22 @@ class ComponentController extends AbstractController
         }
 	}
 
-	#[Route('/{id}/onoff', name: 'onoff', methods: ['POST'])]
-    public function onoff($id, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $component = $entityManager->getRepository(EvcComponent::class)->find($id);
+	#[Route('/sort/{id}/{position}', name: 'sort', methods: ['POST'])]
+	public function sortAction($id, $position, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager)
+	{
+		$component = $compRepo->getComponent($id);
 
-        if (!$component) {
-            return new JsonResponse(['success' => false, 'error' => 'Component not found'], 404);
-        }
+		$component->setPosition($position);
+		$entityManager->persist($component);
+		$entityManager->flush();
+		return new JsonResponse(['success' => true, 'result' => $component->getPosition()]);
+	}
+
+	#[Route('/{id}/onoff', name: 'onoff', methods: ['POST'])]
+    public function onoff($id, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $component = $compRepo->getComponent($id);
+
 		$activeStatus = $component->getCompActive();
 		if($activeStatus == 1){ 
         	$component->setCompActive(0);

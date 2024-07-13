@@ -18,6 +18,16 @@ class FormService
     {
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         foreach ($metadata->fieldMappings as $field => $mapping) {
+			switch($field){
+				case 'createdAt':
+					$disabled = true;
+					break;
+				case 'updatedAt':
+					$disabled = true;
+					break;
+				default:
+					$disabled = false;
+			}
             if (isset($mapping['options']['formType'])) {
                 $formTypeClass = $mapping['options']['formType'];
                 if (class_exists($formTypeClass)) {
@@ -34,6 +44,7 @@ class FormService
 						default:
 							$builder->add($field, $formTypeClass, [
 								'label' => $mapping['options']['label'],
+								'disabled' => $disabled,
 								'required' => $mapping['options']['required'] ?? false,
 							]);
 					}

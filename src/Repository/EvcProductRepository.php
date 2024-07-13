@@ -29,8 +29,27 @@ class EvcProductRepository extends ServiceEntityRepository
 
 	public function getProducts(): array
     {
-		return $this->findBy(criteria: [],orderBy: ['prod_created' => 'ASC'],limit:100);
+		return $this->findBy(criteria: [],orderBy: ['createdAt' => 'ASC'],limit:100);
     }
+
+	public function getProductById(int $id): EvcProduct
+    {
+		$product = $this->find($id);
+		if (!$product) {
+			throw $this->createNotFoundException('Product not found');
+		}
+		return $product;
+    }
+
+	public function getProductBySlug(string $slug): EvcProduct
+    {
+		$product = $this->findOneBy(['slug' => $slug]);
+		if (!$product) {
+			throw $this->createNotFoundException('Product not found');
+		}
+		return $product;
+    }
+
 
     /*
 	public function getProducts(): array

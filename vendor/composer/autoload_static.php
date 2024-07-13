@@ -10,9 +10,9 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         'e8aa6e4b5a1db2f56ae794f1505391a8' => __DIR__ . '/..' . '/amphp/amp/lib/functions.php',
         '76cd0796156622033397994f25b0d8fc' => __DIR__ . '/..' . '/amphp/amp/lib/Internal/functions.php',
-        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
@@ -36,12 +36,20 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         '6a47392539ca2329373e0d33e1dba053' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
         '77e5a577434e31d19d8dd6aeceac1ff4' => __DIR__ . '/..' . '/amphp/http-client/src/Internal/functions.php',
+        '4f9a1929b39ff2a6c1016427077d16f5' => __DIR__ . '/..' . '/zenstruck/foundry/src/functions.php',
+        '21978ed596d07828c426dc898e1f08e0' => __DIR__ . '/..' . '/zenstruck/foundry/src/Persistence/functions.php',
+        'a8d29b081027eaae7a081084fff435bd' => __DIR__ . '/..' . '/zenstruck/foundry/src/phpunit_helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
+        ),
+        'Z' => 
+        array (
+            'Zenstruck\\Foundry\\' => 18,
+            'Zenstruck\\' => 10,
         ),
         'W' => 
         array (
@@ -119,6 +127,7 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
             'Symfony\\Bridge\\Monolog\\' => 23,
             'Symfony\\Bridge\\Doctrine\\' => 24,
             'SymfonyCasts\\Bundle\\VerifyEmail\\' => 32,
+            'Stof\\DoctrineExtensionsBundle\\' => 30,
             'Snc\\RedisBundle\\' => 16,
         ),
         'P' => 
@@ -148,6 +157,14 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
             'Knp\\Bundle\\PaginatorBundle\\' => 27,
             'Kelunik\\Certificate\\' => 20,
         ),
+        'G' => 
+        array (
+            'Gedmo\\' => 6,
+        ),
+        'F' => 
+        array (
+            'Faker\\' => 6,
+        ),
         'E' => 
         array (
             'Egulias\\EmailValidator\\' => 23,
@@ -175,6 +192,10 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         array (
             'Composer\\Semver\\' => 16,
         ),
+        'B' => 
+        array (
+            'Behat\\Transliterator\\' => 21,
+        ),
         'A' => 
         array (
             'App\\Tests\\' => 10,
@@ -200,6 +221,14 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'Zenstruck\\Foundry\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zenstruck/foundry/src',
+        ),
+        'Zenstruck\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zenstruck/assert/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -473,6 +502,10 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         array (
             0 => __DIR__ . '/..' . '/symfonycasts/verify-email-bundle/src',
         ),
+        'Stof\\DoctrineExtensionsBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stof/doctrine-extensions-bundle/src',
+        ),
         'Snc\\RedisBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/snc/redis-bundle/src',
@@ -540,6 +573,14 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         array (
             0 => __DIR__ . '/..' . '/kelunik/certificate/src',
         ),
+        'Gedmo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gedmo/doctrine-extensions/src',
+        ),
+        'Faker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fakerphp/faker/src/Faker',
+        ),
         'Egulias\\EmailValidator\\' => 
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
@@ -594,7 +635,8 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         ),
         'Doctrine\\Common\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/event-manager/src',
+            0 => __DIR__ . '/..' . '/doctrine/common/src',
+            1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
         ),
         'Doctrine\\Bundle\\MigrationsBundle\\' => 
         array (
@@ -611,6 +653,10 @@ class ComposerStaticInit2e074b178cf99c894ccdda33ec3f7bde
         'Composer\\Semver\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
+        ),
+        'Behat\\Transliterator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/behat/transliterator/src/Behat/Transliterator',
         ),
         'App\\Tests\\' => 
         array (

@@ -7,11 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\Form\Type\TextType;
 use App\Form\Type\OnOffType;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: EvcComponentRepository::class)]
 class EvcComponent
 {
-    #[ORM\Id]
+    
+	use TimestampableEntity;
+
+	#[ORM\Id]
     #[ORM\GeneratedValue]
 	#[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
     private ?int $comp_id = null;
@@ -25,11 +30,9 @@ class EvcComponent
     #[ORM\Column(length: 75, options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'app route name'])]
     private ?string $comp_alias = null;
 
+	#[Gedmo\SortablePosition]
     #[ORM\Column(nullable: true, options: ["formType" => TextType::class, 'required' => false, 'label' => 'Order'])]
-    private ?int $comp_sorrend = null;
-
-    #[ORM\Column(length: 255, options: ["formType" => HiddenType::class, 'required' => false, 'label' => 'Alias'])]
-    private ?string $comp_url = null;
+    private ?int $position = null;
 
     public function getCompId(): ?int
     {
@@ -79,27 +82,14 @@ class EvcComponent
         return $this;
     }
 
-    public function getCompSorrend(): ?int
-    {
-        return $this->comp_sorrend;
-    }
+	public function getPosition(): int
+	{
+		return $this->position;
+	}
 
-    public function setCompSorrend(?int $comp_sorrend): static
-    {
-        $this->comp_sorrend = $comp_sorrend;
-
-        return $this;
-    }
-
-    public function getCompUrl(): ?string
-    {
-        return $this->comp_url;
-    }
-
-    public function setCompUrl(string $comp_url): static
-    {
-        $this->comp_url = $comp_url;
-
-        return $this;
-    }
+	public function setPosition(int $position): static
+	{
+		$this->position = $position;
+		return $this;
+	}
 }

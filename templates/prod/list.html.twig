@@ -11,7 +11,7 @@
     <h1>Products list</h1>
 	{% for prod in pagination %}
 		<li>
-			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_prod_page', {id: prod.prodId}) }}" title="">
+			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_prod_page', {slug: prod.slug}) }}" title="">
 				{{ prod.prodName }}
 			</a>
 		</li>

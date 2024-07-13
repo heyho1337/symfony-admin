@@ -8,12 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\Form\Type\SelectType;
 use App\Form\Type\TextType;
-use App\Form\Type\DateTimeType;
 use App\Form\Type\MoneyType;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\Mapping\Annotation\Slug;
 #[ORM\Entity(repositoryClass: EvcProductRepository::class)]
 class EvcProduct
 {
-    #[ORM\Id]
+    
+	use TimestampableEntity;
+
+	#[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
     private ?int $prod_id = null;
@@ -24,17 +28,13 @@ class EvcProduct
     #[ORM\Column(options: ["formType" => SelectType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $prod_active = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["formType" => DateTimeType::class, 'required' => true, 'label' => 'Created'])]
-    private ?\DateTimeInterface $prod_created = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["formType" => DateTimeType::class, 'required' => true, 'label' => 'Last edited'])]
-    private ?\DateTimeInterface $prod_lastmod = null;
-
     #[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
     private ?float $prod_price = null;
 
-    #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Alias'])]
-    private ?string $prod_alias = null;
+    #[Slug(fields: ['prod_name'])]
+	#[ORM\Column(length: 100, unique: true, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Url'])]
+    private ?string $slug = null;
+
 
     public function getProdId(): ?int
     {
@@ -72,30 +72,6 @@ class EvcProduct
         return $this;
     }
 
-    public function getProdCreated(): ?\DateTimeInterface
-    {
-        return $this->prod_created;
-    }
-
-    public function setProdCreated(\DateTimeInterface $prod_created): static
-    {
-        $this->prod_created = $prod_created;
-
-        return $this;
-    }
-
-    public function getProdLastmod(): ?\DateTimeInterface
-    {
-        return $this->prod_lastmod;
-    }
-
-    public function setProdLastmod(\DateTimeInterface $prod_lastmod): static
-    {
-        $this->prod_lastmod = $prod_lastmod;
-
-        return $this;
-    }
-
     public function getProdPrice(): ?float
     {
         return $this->prod_price;
@@ -108,14 +84,14 @@ class EvcProduct
         return $this;
     }
 
-    public function getProdAlias(): ?string
+    public function getSlug(): ?string
     {
-        return $this->prod_alias;
+        return $this->slug;
     }
 
-    public function setProdAlias(string $prod_alias): static
+    public function setSlug(string $slug): static
     {
-        $this->prod_alias = $prod_alias;
+        $this->slug = $slug;
 
         return $this;
     }
