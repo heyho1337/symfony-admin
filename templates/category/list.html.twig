@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block head %}{{parent()}} {{ knp_pagination_rel_links(pagination) }}{% endblock %}
+
+{% block body %}
+
+
+<section class="list prodList">
+    <h1>Categoriey list</h1>
+	{% for category in pagination %}
+		<li>
+			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_category_page', {slug: category.slug}) }}" title="">
+				{{ category.categoryName }}
+				{{ category.productCount }}
+			</a>
+			{% set form = form_factory.create(form_type, category, { 'data_class': 'App\\DTO\\EvcCategoryExtended', 'entity_id': category.id }).createView() %}
+			{{ form_start(form, { 'action': '', 'attr': { 'entityId': category.id} }) }}
+			{{ form_row(form.children['category_active'], { 'attr': { 'entityId': category.id, 'url': 'category' } }) }}
+			{{ form_end(form) }}
+		</li>
+	{% endfor %}
+	<div class="navigation">
+		{{ knp_pagination_render(pagination) }}
+	</div>
+</section>
+{% endblock %}

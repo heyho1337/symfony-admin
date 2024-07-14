@@ -17,7 +17,7 @@ export default class extends Controller {
             enableTime: true,
             dateFormat: "Y-m-d H:i", // Format for date and time
             time_24hr: true // Use 24-hour format
-        });
+		});
 		datepicker.forEach(calendarInput => {
 			const calendarContainer = calendarInput.calendarContainer;
 			const calendarMonthNav = calendarInput.monthNav;

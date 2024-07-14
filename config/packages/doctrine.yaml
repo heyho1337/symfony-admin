@@ -24,6 +24,9 @@ doctrine:
                 alias: App
         controller_resolver:
             auto_mapping: true
+        filters:
+            ActiveCategory: App\Doctrine\ActiveCategoryFilter
+
 
 when@test:
     doctrine:

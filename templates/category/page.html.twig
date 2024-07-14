@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Category{% endblock %}
+
+{% block body %}
+
+
+<section class="page prodPage">
+    <h1>Category page</h1>
+	<form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto" action="{{ path('app_prod_set', {slug: category.slug}) }}">
+        {{ form_widget(form) }}
+    </form>
+</section>
+{% endblock %}

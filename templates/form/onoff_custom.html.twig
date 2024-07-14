@@ -1,7 +1,7 @@
 {% block custom_onoff_widget %}
 	<div class="grid">
 		<label>{{ label }}</label>
-		<div data-controller="onoff" class="inline-flex items-center">
+		<div data-controller="onoff" data-onoff-url-value="{{ attr.url }}" class="inline-flex items-center">
 			<div class="relative inline-block w-8 h-4 rounded-full cursor-pointer">
 				<input 
 					id="switch-component" 

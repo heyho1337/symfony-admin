@@ -11,6 +11,10 @@ import axios from 'axios';
  */
 export default class extends Controller {
 
+	static values = {
+        url: String
+    };
+
     connect() {
 		
     }
@@ -18,7 +22,9 @@ export default class extends Controller {
 	change(event) {
 		const button = event.target;
 		const id = button.getAttribute('value');
-        axios.post(`/component/${id}/onoff`)
+		const url = this.urlValue;
+		console.log(`${url}/${id}/onoff`);
+        axios.post(`${url}/${id}/onoff`)
 			.then(response => {
 				console.log(response);
 				if (response.data.success) {

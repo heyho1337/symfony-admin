@@ -8,13 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcProductRepository;
-use App\Repository\EvcCategoryRepository;
-use App\Form\Type\ProductType;
-use App\Form\Type\MultiSelectType;
+use App\Form\Type\FormType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcCategory;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -42,11 +39,20 @@ class ProductController extends AbstractController
     }
 
 	#[Route('/{slug}', name: 'page')]
-    public function get($slug, EvcProductRepository $prodRepo, EvcCategoryRepository $categRepo): Response
+    public function get($slug, EvcProductRepository $prodRepo, EntityManagerInterface $entityManager): Response
     {
-        $product = $prodRepo->getProductBySlug($slug);
+        $entityManager->getFilters()
+            ->enable('ActiveCategory');
 		
-		$form = $this->createForm(ProductType::class, $product);
+		$product = $prodRepo->getProductBySlug($slug);
+		
+		$form = $this->createForm(
+			FormType::class, 
+			$product, 
+			['attr' => ['id' => $product->getId(), 'url' => '/product', 'classname' => \App\Entity\EvcProduct::class]],
+			['data_class' => \App\Entity\EvcProduct::class]
+		);
+		
 		$form->add('prod_category', EntityType::class, [
 			'class' => EvcCategory::class,
 			'choice_label' => 'categoryName',
@@ -70,7 +76,13 @@ class ProductController extends AbstractController
 		
 		$product = $prodRepo->getProductBySlug($slug);
 
-		$form = $this->createForm(ProductType::class, $product);
+		$form = $this->createForm(
+			FormType::class, 
+			$product, 
+			['attr' => ['id' => $product->getId(), 'url' => '/product', 'classname' => \App\Entity\EvcProduct::class]],
+			['data_class' => \App\Entity\EvcProduct::class]
+		);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

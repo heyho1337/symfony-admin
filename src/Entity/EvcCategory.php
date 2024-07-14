@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation\Slug;
 use App\Form\Type\TextType;
+use App\Form\Type\OnOffType;
 
 #[ORM\Entity(repositoryClass: EvcCategoryRepository::class)]
 class EvcCategory
@@ -25,7 +26,7 @@ class EvcCategory
     #[ORM\Column(length: 255)]
     private ?string $category_name = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
+    #[ORM\Column(type: Types::SMALLINT, options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $category_active = null;
 
     #[Slug(fields: ['category_name'])]
@@ -38,8 +39,10 @@ class EvcCategory
     /**
      * @var Collection<int, EvcProduct>
      */
-    #[ORM\ManyToMany(targetEntity: EvcProduct::class, mappedBy: 'prod_category')]
+    #[ORM\ManyToMany(targetEntity: EvcProduct::class, mappedBy: 'prod_category', fetch: 'EXTRA_LAZY')]
     private Collection $categoryProducts;
+
+	private ?int $productCount = null;
 
     public function __construct()
     {
@@ -123,6 +126,17 @@ class EvcCategory
             $categoryProduct->removeProdCategory($this);
         }
 
+        return $this;
+    }
+
+	public function getProductCount(): ?int
+    {
+        return $this->productCount;
+    }
+
+    public function setProductCount(?int $productCount): static
+    {
+        $this->productCount = $productCount;
         return $this;
     }
 }

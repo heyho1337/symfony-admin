@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcComponentRepository;
-use App\Form\Type\ComponentType;
-use App\Entity\EvcComponent;
+use App\Form\Type\FormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,7 +44,13 @@ class ComponentController extends AbstractController
 		$component = $compRepo->getComponent($id);
 		
         $flashMessages = $session->getFlashBag()->all();
-		$form = $this->createForm(ComponentType::class, $component, ['attr' => ['id' => $id]]);
+		
+		$form = $this->createForm(
+			FormType::class, 
+			$component, 
+			['attr' => ['id' => $id, 'url' => '/component', 'classname' => \App\Entity\EvcComponent::class]],
+			['data_class' => \App\Entity\EvcComponent::class]
+		);
 
 		return $this->render('component/page.html.twig', [
 			'component' => $component,
@@ -71,32 +76,4 @@ class ComponentController extends AbstractController
             return $this->redirectToRoute('app_component_page', ['id' => $id]);
         }
 	}
-
-	#[Route('/sort/{id}/{position}', name: 'sort', methods: ['POST'])]
-	public function sortAction($id, $position, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager)
-	{
-		$component = $compRepo->getComponent($id);
-
-		$component->setPosition($position);
-		$entityManager->persist($component);
-		$entityManager->flush();
-		return new JsonResponse(['success' => true, 'result' => $component->getPosition()]);
-	}
-
-	#[Route('/{id}/onoff', name: 'onoff', methods: ['POST'])]
-    public function onoff($id, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $component = $compRepo->getComponent($id);
-
-		$activeStatus = $component->getCompActive();
-		if($activeStatus == 1){ 
-        	$component->setCompActive(0);
-		}
-		else{
-			$component->setCompActive(1);
-		}
-        $entityManager->flush();
-
-        return new JsonResponse(['success' => true, 'result' => $component->getCompActive()]);
-    }
 }

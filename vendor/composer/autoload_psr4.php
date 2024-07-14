@@ -14,6 +14,7 @@ return array(
     'Twig\\' => array($vendorDir . '/twig/twig/src'),
     'Symfonycasts\\TailwindBundle\\' => array($vendorDir . '/symfonycasts/tailwind-bundle/src'),
     'Symfony\\WebpackEncoreBundle\\' => array($vendorDir . '/symfony/webpack-encore-bundle/src'),
+    'Symfony\\UX\\Turbo\\' => array($vendorDir . '/symfony/ux-turbo/src'),
     'Symfony\\UX\\StimulusBundle\\' => array($vendorDir . '/symfony/stimulus-bundle/src'),
     'Symfony\\UX\\Autocomplete\\' => array($vendorDir . '/symfony/ux-autocomplete/src'),
     'Symfony\\Runtime\\Symfony\\Component\\' => array($vendorDir . '/symfony/runtime/Internal'),

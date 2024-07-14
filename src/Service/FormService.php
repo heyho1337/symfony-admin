@@ -14,7 +14,7 @@ class FormService
         $this->entityManager = $entityManager;
     }
 
-    public function buildFormType(FormBuilderInterface $builder, string $entityClass, int $id = null): void
+    public function buildFormType(FormBuilderInterface $builder, string $entityClass, int $id = null, string $url = null): void
     {
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         foreach ($metadata->fieldMappings as $field => $mapping) {
@@ -36,10 +36,10 @@ class FormService
 							$builder->add($field, $formTypeClass, [
 								'label' => $mapping['options']['label'] ?? '',
 								'attr' => [
-									'entityId' => $id
+									'entityId' => $id,
+									'url' => $url
 								],
 							]);
-
 							break;
 						default:
 							$builder->add($field, $formTypeClass, [

@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use App\Form\Type\SelectType;
+use App\Form\Type\OnOffType;
 use App\Form\Type\TextType;
 use App\Form\Type\MoneyType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -26,7 +26,7 @@ class EvcProduct
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $prod_name = null;
 
-    #[ORM\Column(options: ["formType" => SelectType::class, 'required' => true, 'label' => 'Active'])]
+    #[ORM\Column(options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $prod_active = null;
 
     #[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]

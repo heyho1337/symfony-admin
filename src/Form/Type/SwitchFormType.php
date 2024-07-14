@@ -4,30 +4,36 @@ namespace App\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use App\Repository\EvcProductRepository;
-use App\Service\FormService;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\EvcProduct;
+use App\Entity\EvcCategory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductType extends AbstractType
+class SwitchFormType extends AbstractType
 {
     public function __construct(
-        protected EvcProductRepository $prodRepo,
-        protected FormService $formService,
-        protected EntityManagerInterface $entityManager
+        
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $this->formService->buildFormType($builder, EvcProduct::class);
+        $builder->add('category_active', 'App\Form\Type\OnOffType', [
+			'label' => false,
+			'attr' => [
+				'entityId' => $options['entity_id'],
+				'url' => $options['url']
+			],
+		]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => EvcProduct::class,
+            'data_class' => EvcCategory::class,
+            'entity_id' => null,
+			'url' => null
         ]);
+
+		$resolver->setRequired(['data_class', 'entity_id', 'url']);
     }
+	
 }

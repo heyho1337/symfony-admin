@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\EvcCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\DTO\EvcCategoryExtended;
 
 /**
  * @extends ServiceEntityRepository<EvcCategory>
@@ -28,9 +29,56 @@ class EvcCategoryRepository extends ServiceEntityRepository
 			->getResult();
 	}
 
+	public function getCategories(): array
+    {
+		return $this->findBy(criteria: [],orderBy: ['createdAt' => 'ASC']);
+    }
+
+	public function getExtendedCategories(): array
+	{
+
+		$result = $this->createQueryBuilder('category')
+            ->select(sprintf(
+                'NEW %s(
+                    category.id,
+					category.category_name,
+					category.category_active,
+					category.slug,
+					category.category_description,
+					COUNT(Product.id)
+                )',
+                EvcCategoryExtended::class
+            ))
+			->leftJoin('category.categoryProducts', 'Product')
+        	->groupBy('category.id')
+        	->orderBy('category.createdAt', 'ASC')
+			->getQuery()
+			->getResult();
+		
+		return $result;
+	}
+
 	public function getActiveCategories(): array
     {
         return $this->findBy(['category_active' => 1]);
+    }
+
+	public function getCategoryBySlug(string $slug): EvcCategory
+    {
+		$category = $this->findOneBy(['slug' => $slug]);
+		if (!$category) {
+			throw $this->createNotFoundException('Category not found');
+		}
+		return $category;
+    }
+
+	public function getCategory(int $id): EvcCategory
+    {
+		$category = $this->find($id);
+		if (!$category) {
+			throw $this->createNotFoundException('Category not found');
+		}
+		return $category;
     }
 
     //    /**

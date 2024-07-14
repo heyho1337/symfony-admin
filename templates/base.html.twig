@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	    {% block stylesheets %}
+			{{ ux_controller_link_tags() }}
             {{ encore_entry_link_tags('app') }}
 			<link rel="stylesheet" href="{{ asset('build/app.css') }}">
 		{% endblock %}
