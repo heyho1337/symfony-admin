@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EvcProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\Form\Type\OnOffType;
@@ -41,6 +42,9 @@ class EvcProduct
      */
     #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
     private Collection $prod_category;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $prod_description = null;
 
     public function __construct()
     {
@@ -120,6 +124,18 @@ class EvcProduct
     public function removeProdCategory(EvcCategory $prodCategory): static
     {
         $this->prod_category->removeElement($prodCategory);
+
+        return $this;
+    }
+
+    public function getProductDescription(): ?string
+    {
+        return $this->prod_description;
+    }
+
+    public function setProductDescription(?string $prod_description): static
+    {
+        $this->prod_description = $prod_description;
 
         return $this;
     }

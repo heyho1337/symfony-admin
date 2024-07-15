@@ -6,18 +6,21 @@
 
 {% block body %}
 
-
-<section class="list prodList">
-    <h1>Products list</h1>
-	{% for prod in pagination %}
-		<li>
-			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_prod_page', {slug: prod.slug}) }}" title="">
-				{{ prod.prodName }}
-			</a>
-		</li>
-	{% endfor %}
+<section data-controller="search" class="list prodList">
+	<h1>Products list</h1>
+	{{ render(controller('App\\Controller\\SearchController::search', { 'nameValue': nameValue })) }}
+	<ul>
+		{% for prod in pagination %}
+			<li>
+				<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_prod_page', {slug: prod.slug}) }}" title="">
+					{{ prod.prodName }}
+				</a>
+			</li>
+		{% endfor %}
+	<ul>
 	<div class="navigation">
 		{{ knp_pagination_render(pagination) }}
 	</div>
 </section>
+
 {% endblock %}

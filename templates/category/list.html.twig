@@ -15,9 +15,9 @@
 				{{ category.categoryName }}
 				{{ category.productCount }}
 			</a>
-			{% set form = form_factory.create(form_type, category, { 'data_class': 'App\\DTO\\EvcCategoryExtended', 'entity_id': category.id }).createView() %}
+			{% set form = form_factory.create(form_type, category, { 'data_class': 'App\\DTO\\EvcCategoryExtended', 'entity_id': category.id, 'column_name': 'category_active' }).createView() %}
 			{{ form_start(form, { 'action': '', 'attr': { 'entityId': category.id} }) }}
-			{{ form_row(form.children['category_active'], { 'attr': { 'entityId': category.id, 'url': 'category' } }) }}
+			{{ form_row(form.children['category_active'], { 'attr': { 'entityId': category.id, 'url': 'category'} }) }}
 			{{ form_end(form) }}
 		</li>
 	{% endfor %}

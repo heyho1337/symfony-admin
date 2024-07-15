@@ -11,6 +11,7 @@ use App\Repository\EvcCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\Type\FormType;
 use App\Form\Type\SwitchFormType;
+use App\Form\Type\ProductType;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\DTO\EvcCategoryExtended;
 

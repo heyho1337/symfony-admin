@@ -32,13 +32,22 @@ class EvcProductRepository extends ServiceEntityRepository
 		return $this->findBy(criteria: [],orderBy: ['createdAt' => 'ASC']);
     }
 
-	public function getProductById(int $id): EvcProduct
+	public function getProductsWithFilters(string $name = null): array
     {
-		$product = $this->find($id);
-		if (!$product) {
-			throw $this->createNotFoundException('Product not found');
+		$query =  $this->createQueryBuilder('product');
+
+		if($name != null){
+			$nameArray = explode(" ",$name);
+			$query
+				->andWhere('product.prod_name LIKE :name OR product.prod_name IN (:nameArray) OR product.prod_description LIKE :name')
+				->setParameter('nameArray', $nameArray)
+				->setParameter('name', '%' . $name . '%');
 		}
-		return $product;
+
+		$query
+			->orderBy('product.createdAt', 'ASC');
+
+		return $query->getQuery()->getResult();
     }
 
 	public function getProductBySlug(string $slug): EvcProduct

@@ -5,7 +5,7 @@ namespace App\EventListener;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use App\Controller\BaseController;
+use Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController;
 use App\Controller\LoginController;
 use App\Controller\RegController;
 
@@ -27,17 +27,13 @@ class AuthListener
         }
 
         $controllerObject = $controller[0];
-
-        if ($controllerObject instanceof AbstractController) {
-            // Skip access check for LoginController and RegController
-            if ($controllerObject instanceof LoginController || $controllerObject instanceof RegController) {
-                return;
-            }
-
-            if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
-                throw new AccessDeniedException();
-            }
+        if ($controllerObject instanceof LoginController || $controllerObject instanceof RegController || $controllerObject instanceof ProfilerController ) {
+            return;
         }
+        if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw new AccessDeniedException();
+        }
+        
     }
 }
 

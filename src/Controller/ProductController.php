@@ -12,6 +12,8 @@ use App\Form\Type\FormType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcCategory;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -24,9 +26,13 @@ class ProductController extends AbstractController
     }
 	
 	#[Route('', name: 'list')]
-    public function list(Request $request, PaginatorInterface $paginator, EvcProductRepository $prodRepo): Response
+    public function list(Request $request, PaginatorInterface $paginator, EvcProductRepository $prodRepo, AuthorizationCheckerInterface $authorizationChecker): Response
     {
-		$products = $prodRepo->getProducts();
+		if (!$authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
+			throw new AccessDeniedException();
+		}
+		$nameValue = $request->query->get('name', '') ?? '';
+		$products = $prodRepo->getProductsWithFilters($nameValue);
 		$pagination = $paginator->paginate(
 			$products,
 			$request->query->getInt('page', 1),
@@ -34,7 +40,8 @@ class ProductController extends AbstractController
 		);
 
 		return $this->render('prod/list.html.twig', [
-			'pagination' => $pagination
+			'pagination' => $pagination,
+			'nameValue' => $nameValue
         ]);
     }
 
