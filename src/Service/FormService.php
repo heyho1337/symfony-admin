@@ -5,16 +5,16 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-class FormService
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+class FormService extends AbstractController
 {
-    protected EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
+       
     }
 
-    public function buildFormType(FormBuilderInterface $builder, string $entityClass, int $id = null, string $url = null): void
+    public function buildFormType(FormBuilderInterface $builder, string $entityClass, int $id = null, string $url = null, callable $extraInput = null): void
     {
         $metadata = $this->entityManager->getClassMetadata($entityClass);
         foreach ($metadata->fieldMappings as $field => $mapping) {
@@ -53,9 +53,36 @@ class FormService
                 }
             }
         }
+		if($extraInput){
+			$extraInput($builder);
+		}
+		
 		$builder->add('save', SubmitType::class, [
             'label' => 'Save',
         ]);
     }
+
+	public function save($request, $entity, $setmethods = null): bool
+	{
+		$data = $request->request->all();
+
+		foreach ($data['form'] as $field => $value) {
+			$method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+			
+			if ($setmethods) {
+				$setmethods($field, $value, $entity);
+			}
+			
+			if (method_exists($entity, $method)) {
+				$entity->$method($value);
+			}
+		}
+		
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+
+		$this->addFlash('notice','Saved successfully');
+		return true;
+	}
 }
 

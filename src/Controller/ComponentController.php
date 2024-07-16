@@ -9,9 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcComponentRepository;
 use App\Form\Type\FormType;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\FormService;
 
 #[Route('/component', name: 'app_component_')]
 class ComponentController extends AbstractController
@@ -32,18 +30,15 @@ class ComponentController extends AbstractController
 			10
 		);
 
-		//add the $products to the pagination;
 		return $this->render('component/list.html.twig', [
 			'pagination' => $pagination
         ]);
     }
 
 	#[Route('/{id}', name: 'page')]
-    public function get($id, EvcComponentRepository $compRepo, SessionInterface $session): Response
+    public function get($id, EvcComponentRepository $compRepo): Response
     {
 		$component = $compRepo->getComponent($id);
-		
-        $flashMessages = $session->getFlashBag()->all();
 		
 		$form = $this->createForm(
 			FormType::class, 
@@ -55,25 +50,14 @@ class ComponentController extends AbstractController
 		return $this->render('component/page.html.twig', [
 			'component' => $component,
 			'form' => $form->createView(),
-			'msg' => $flashMessages
         ]);
     }
 
 	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $id, EvcComponentRepository $compRepo, EntityManagerInterface $entityManager): Response
+	public function save(Request $request, $id, EvcComponentRepository $compRepo, FormService $formService): Response
 	{
 		$component = $compRepo->getComponent($id);
-		
-		$form = $this->createForm(ComponentType::class, $component);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($component);
-            $entityManager->flush();
-
-			$this->addFlash('notice','Saved successfully');
-
-            return $this->redirectToRoute('app_component_page', ['id' => $id]);
-        }
+		$formService->save($request,$component);
+        return $this->redirectToRoute('app_component_page', ['id' => $id]);
 	}
 }

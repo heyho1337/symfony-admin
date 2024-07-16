@@ -58,6 +58,37 @@ class EvcCategoryRepository extends ServiceEntityRepository
 		return $result;
 	}
 
+	public function getCategoriesWithFilters(string $name = null, string $sort, string $direction): array
+    {
+		$query =  $this->createQueryBuilder('category')
+		->select(sprintf(
+			'NEW %s(
+				category.id,
+				category.category_name,
+				category.category_active,
+				category.slug,
+				category.category_description,
+				COUNT(Product.id)
+			)',
+			EvcCategoryExtended::class
+		))
+		->leftJoin('category.categoryProducts', 'Product')
+		->groupBy('category.id');
+
+		if($name != null){
+			$nameArray = explode(" ",$name);
+			$query
+				->andWhere('category.category_name LIKE :name OR category.category_name IN (:nameArray) OR category.category_description LIKE :name')
+				->setParameter('nameArray', $nameArray)
+				->setParameter('name', '%' . $name . '%');
+		}
+
+		$query
+			->orderBy('category.'.$sort, $direction);
+
+		return $query->getQuery()->getResult();
+    }
+
 	public function getActiveCategories(): array
     {
         return $this->findBy(['category_active' => 1]);

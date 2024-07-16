@@ -11,9 +11,10 @@ use App\Repository\EvcCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\Type\FormType;
 use App\Form\Type\SwitchFormType;
-use App\Form\Type\ProductType;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\DTO\EvcCategoryExtended;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use App\Service\FormService;
 
 #[Route('/category', name: 'app_category_')]
 class CategoryController extends AbstractController
@@ -21,17 +22,21 @@ class CategoryController extends AbstractController
 
 	#[Route('', name: 'list')]
     public function list(
-		Request $request, 
 		PaginatorInterface $paginator, 
 		EvcCategoryRepository $categRepo,
-		FormFactoryInterface $formFactory
+		FormFactoryInterface $formFactory,
+		#[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter] string $name = '',
+		#[MapQueryParameter] string $sort = 'createdAt',
+		#[MapQueryParameter] string $direction = 'ASC',
 	): Response
     {
 		
-		$categories = $categRepo->getExtendedCategories();
+		$nameValue = $name;
+		$categories = $categRepo->getCategoriesWithFilters($nameValue, $sort, $direction);
 		$pagination = $paginator->paginate(
 			$categories,
-			$request->query->getInt('page', 1),
+			$page,
 			10
 		);
 
@@ -39,12 +44,15 @@ class CategoryController extends AbstractController
 			'pagination' => $pagination,
 			'form_factory' => $formFactory,
 			'form_type' => SwitchFormType::class,
-			'category_class' => EvcCategoryExtended::class
+			'category_class' => EvcCategoryExtended::class,
+			'nameValue' => $nameValue,
+			'sort' => $sort,
+			'direction' => $direction
         ]);
     }
 
 	#[Route('/{slug}', name: 'page')]
-    public function get($slug, EvcCategoryRepository $categRepo, EntityManagerInterface $entityManager): Response
+    public function get($slug, EvcCategoryRepository $categRepo): Response
     {
 		
 		$category = $categRepo->getCategoryBySlug($slug);
@@ -63,19 +71,10 @@ class CategoryController extends AbstractController
     }
 
 	#[Route('/set/{slug}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $slug, EntityManagerInterface $entityManager, EvcCategoryRepository $categRepo): Response
+	public function save(Request $request, $slug, EvcCategoryRepository $categRepo, FormService $formService): Response
 	{
-		
 		$category = $categRepo->getCategoryBySlug($slug);
-
-		$form = $this->createForm(ProductType::class, $category);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($category);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_category_page', ['id' => $slug]);
-        }
+		$formService->save($request,$category);
+        return $this->redirectToRoute('app_category_page', ['slug' => $category->getSlug()]);
 	}
 }

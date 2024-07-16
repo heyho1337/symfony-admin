@@ -19,11 +19,13 @@ class FormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->className = $options['attr']['classname'];
-		$this->formService->buildFormType($builder, $this->className, $options['attr']['id'], $options['attr']['url']);
+		$this->formService->buildFormType($builder, $this->className, $options['attr']['id'], $options['attr']['url'], $options['extraInput']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        
+        $resolver->setDefaults([
+            'extraInput' => null
+        ]);
     }
 }

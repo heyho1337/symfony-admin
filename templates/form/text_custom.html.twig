@@ -7,7 +7,7 @@
                	name="{{ full_name }}"
                	{% if required %}required="required"{% endif %} 
 				{% if disabled %}disabled{% endif %} 
-               	value="{{ attr.value }}"
+               	value="{{ value }}"
 				{% if data_action != false %}
 					data-action="input->search#namefilter"
 					data-search-target="name"

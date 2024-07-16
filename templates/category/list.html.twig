@@ -6,9 +6,9 @@
 
 {% block body %}
 
-
-<section class="list prodList">
+<section data-controller="search" class="list prodList">
     <h1>Categoriey list</h1>
+	{{ render(controller('App\\Controller\\SearchController::search', { 'nameValue': nameValue, 'sort': sort, 'direction': direction })) }}
 	{% for category in pagination %}
 		<li>
 			<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_category_page', {slug: category.slug}) }}" title="">

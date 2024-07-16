@@ -17,6 +17,7 @@ class MoneyType extends AbstractType
         $resolver->setDefaults([
             'label' => false,
 			'currency' => 'USD',
+			'scale' => 0
         ]);
     }
 

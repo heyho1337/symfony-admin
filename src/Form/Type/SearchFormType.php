@@ -21,14 +21,8 @@ class SearchFormType extends AbstractType
 		$builder->add('name', 'App\Form\Type\TextType', [
 			'label' => 'Search',
 			'data_action' => 'list#namefilter',
-			'attr' => [
-				'value' => $nameValue
-			]
+			'data' => $nameValue
 		]);
-
-		$builder->add('search', SubmitType::class, [
-            'label' => 'Search',
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

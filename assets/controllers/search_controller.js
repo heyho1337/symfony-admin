@@ -13,7 +13,6 @@ export default class extends Controller {
 	static targets = ['name'];
 
     connect() {
-		console.log('Search controller connected');
 		const url = new URL(window.location.href);
 		const name = url.searchParams.get('name');
 		if (name != null) {

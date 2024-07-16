@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-
+import { useTransition } from 'stimulus-use';
 /*
  * This is an example Stimulus controller!
  *
@@ -10,14 +10,38 @@ import { Controller } from '@hotwired/stimulus';
  * Delete this file or adapt it for your use!
  */
 export default class extends Controller {
-	static targets = ['dialog'];
+	static targets = ['timerbar']
+
+	static values = {
+        autoClose: Number,
+    };
 
     connect() {
-        console.log('Dialog controller connected');
+		console.log('Dialog controller connected');
+
+		useTransition(this, {
+            leaveActive: 'transition ease-in duration-200',
+            leaveFrom: 'opacity-100',
+            leaveTo: 'opacity-0',
+            transitioned: true,
+        });
+
+		if (this.autoCloseValue) {
+            setTimeout(() => {
+                this.close();
+            }, this.autoCloseValue);
+
+			if (this.hasTimerbarTarget) {
+				console.log("timerbartarget");
+				setTimeout(() => {
+					console.log("eltunes kezd");
+                    this.timerbarTarget.style.width = 0;
+                }, 10);
+            }
+        }
     }
 
 	close() {
-		console.log(this.dialogTarget);
-        this.dialogTarget.remove();
+		this.leave();
     }
 }

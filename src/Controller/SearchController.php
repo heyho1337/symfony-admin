@@ -12,12 +12,15 @@ use Symfony\Component\HttpFoundation\Request;
 class SearchController extends AbstractController
 {
 	#[Route('/search', name: 'search_component')]
-	public function search(string $nameValue): Response
+	public function search(string $nameValue, string $sort, string $direction): Response
     {
 		$form = $this->createForm(SearchFormType::class, options:['name_value' => $nameValue]);
 		
 		return $this->render('search/search_component.html.twig', [
-            'form' => $form
+            'form' => $form,
+			'sort' => $sort,
+			'direction' => $direction,
+			'name' => $nameValue
         ]);
     }
 }

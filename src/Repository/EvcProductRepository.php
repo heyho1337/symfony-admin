@@ -32,7 +32,7 @@ class EvcProductRepository extends ServiceEntityRepository
 		return $this->findBy(criteria: [],orderBy: ['createdAt' => 'ASC']);
     }
 
-	public function getProductsWithFilters(string $name = null): array
+	public function getProductsWithFilters(string $name = null, string $sort, string $direction): array
     {
 		$query =  $this->createQueryBuilder('product');
 
@@ -45,7 +45,7 @@ class EvcProductRepository extends ServiceEntityRepository
 		}
 
 		$query
-			->orderBy('product.createdAt', 'ASC');
+			->orderBy('product.'.$sort, $direction);
 
 		return $query->getQuery()->getResult();
     }

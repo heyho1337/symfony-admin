@@ -8,12 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcProductRepository;
+use App\Repository\EvcCategoryRepository;
 use App\Form\Type\FormType;
+use App\Service\FormService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcCategory;
+use App\Entity\EvcProduct;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -26,41 +28,87 @@ class ProductController extends AbstractController
     }
 	
 	#[Route('', name: 'list')]
-    public function list(Request $request, PaginatorInterface $paginator, EvcProductRepository $prodRepo, AuthorizationCheckerInterface $authorizationChecker): Response
+    public function list(
+		PaginatorInterface $paginator, 
+		EvcProductRepository $prodRepo,
+		#[MapQueryParameter] int $page = 1,
+        #[MapQueryParameter] string $name = '',
+		#[MapQueryParameter] string $sort = 'createdAt',
+		#[MapQueryParameter] string $direction = 'ASC',
+	): Response
     {
-		if (!$authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
-			throw new AccessDeniedException();
-		}
-		$nameValue = $request->query->get('name', '') ?? '';
-		$products = $prodRepo->getProductsWithFilters($nameValue);
+		$nameValue = $name;
+		$products = $prodRepo->getProductsWithFilters($nameValue, $sort, $direction);
 		$pagination = $paginator->paginate(
 			$products,
-			$request->query->getInt('page', 1),
+			$page,
 			10
 		);
 
 		return $this->render('prod/list.html.twig', [
 			'pagination' => $pagination,
-			'nameValue' => $nameValue
+			'nameValue' => $nameValue,
+			'sort' => $sort,
+			'direction' => $direction
         ]);
     }
 
 	#[Route('/{slug}', name: 'page')]
-    public function get($slug, EvcProductRepository $prodRepo, EntityManagerInterface $entityManager): Response
-    {
-        $entityManager->getFilters()
+    public function get(
+        string $slug, 
+        EvcProductRepository $prodRepo, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        $entityManager->getFilters()->enable('ActiveCategory');
+        $product = $prodRepo->getProductBySlug($slug);
+
+        $form = $this->createForm(
+            FormType::class, 
+            $product, 
+            [
+                'attr' => [
+                    'id' => $product->getId(),
+                    'url' => '/product',
+                    'classname' => EvcProduct::class,
+                ],
+                'extraInput' => function($builder) {
+                    $this->addCategorySelect($builder);
+                }
+            ]
+        );
+
+        return $this->render('prod/page.html.twig', [
+            'product' => $product,
+            'form' => $form->createView(),
+        ]);
+    }
+
+	#[Route('/set/{slug}', name: 'set', methods: ['POST'])]
+	public function save(
+		Request $request, 
+		$slug, 
+		EntityManagerInterface $entityManager, 
+		EvcProductRepository $prodRepo,
+		EvcCategoryRepository $categRepo,
+		FormService $formService
+	): Response
+	{
+		$entityManager->getFilters()
             ->enable('ActiveCategory');
-		
+
 		$product = $prodRepo->getProductBySlug($slug);
-		
-		$form = $this->createForm(
-			FormType::class, 
-			$product, 
-			['attr' => ['id' => $product->getId(), 'url' => '/product', 'classname' => \App\Entity\EvcProduct::class]],
-			['data_class' => \App\Entity\EvcProduct::class]
-		);
-		
-		$form->add('prod_category', EntityType::class, [
+		$categories = $product->getProdCategory()->toArray();
+
+		$formService->save($request, $product, function($field, $value, $entity) use ($categories, $categRepo) {
+			$this->saveUniqueData($field, $value, $entity, $categories, $categRepo);
+		});
+
+		return $this->redirectToRoute('app_prod_page', ['slug' => $slug]);
+	}
+
+	public function addCategorySelect($builder)
+	{
+		$builder->add('prod_category', EntityType::class, [
 			'class' => EvcCategory::class,
 			'choice_label' => 'categoryName',
 			'label' => 'Categories',
@@ -70,34 +118,34 @@ class ProductController extends AbstractController
 			'expanded' => false,
 			'autocomplete' => true,
 		]);
-		
-		return $this->render('prod/page.html.twig', [
-			'product' => $product,
-			'form' => $form->createView(),
-        ]);
-    }
+	}
 
-	#[Route('/set/{slug}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $slug, EntityManagerInterface $entityManager, EvcProductRepository $prodRepo): Response
+	public function saveUniqueData(
+		string $field,
+		$value,
+		EvcProduct $product = null,
+		array $categories = [],
+		EvcCategoryRepository $categRepo = null
+	)
 	{
+		if ($field === 'prod_price') {
+			$value = (float) str_replace(',', '', $value);
+		}
 		
-		$product = $prodRepo->getProductBySlug($slug);
-
-		$form = $this->createForm(
-			FormType::class, 
-			$product, 
-			['attr' => ['id' => $product->getId(), 'url' => '/product', 'classname' => \App\Entity\EvcProduct::class]],
-			['data_class' => \App\Entity\EvcProduct::class]
-		);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($product);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_prod_page', ['id' => $slug]);
-        }
+		if ($field === 'prod_category' && is_array($value)) {
+			foreach ($categories as $category) {
+				if (!in_array($category->getId(), $value)) {
+					$product->removeProdCategory($category);
+				}
+			}
+	
+			foreach ($value as $categId) {
+				$category = $categRepo->find($categId);
+				if ($category && !in_array($category->getId(), array_map(fn($cat) => $cat->getId(), $categories))) {
+					$product->addProdCategory($category);
+				}
+			}
+		}
 	}
     
 }

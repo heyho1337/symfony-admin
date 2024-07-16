@@ -5,8 +5,8 @@
         "@fortawesome/fontawesome-free": "^6.5.2",
         "@hotwired/stimulus": "^3.2.2",
         "@symfony/stimulus-bridge": "^3.2.2",
-		"@symfony/ux-autocomplete":"file:vendor/symfony/ux-autocomplete/assets",
-		"@symfony/ux-turbo":"file:vendor/symfony/ux-turbo/assets",
+        "@symfony/ux-autocomplete": "file:vendor/symfony/ux-autocomplete/assets",
+        "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^4.6.1",
         "autoprefixer": "^10.4.19",
         "core-js": "^3.23.0",
@@ -30,6 +30,8 @@
     },
     "dependencies": {
         "@material-tailwind/html": "^2.2.2",
-        "axios": "^1.7.2"
+        "axios": "^1.7.2",
+        "stimulus-use": "^0.52.2",
+        "turbo-view-transitions": "^0.3.0"
     }
 }

@@ -1,6 +1,31 @@
-{# templates/form/text_custom.html.twig #}
-{% block search_component %}
-	<section class="searchModule" >
-		{{ form_widget(form) }}
-	</section>
-{% endblock %}
+{% macro sortArrow(sortName, sort, direction) %}
+    {% if sort == sortName %}
+        {% if direction == 'asc' %}
+            <i class="fa-solid fa-sort-up"></i>
+        {% else %}
+            <i class="fa-solid fa-sort-down"></i>
+        {% endif %}
+    {% else %}
+        <i class="fa-solid fa-sort-up"></i>
+		<i class="fa-solid fa-sort-down"></i>
+    {% endif %}
+{% endmacro %}
+
+<section class="searchModule" >
+	{{ form_widget(form) }}
+
+    {% set queryParams = app.request.query.all %}
+	{% if name != '' %}
+		{% set queryParams = queryParams|merge({'name': name}) %}
+	{% endif %}
+
+	{% set queryParamsCreated = queryParams|merge({'sort': 'createdAt', 'direction': sort == 'createdAt' and direction == 'asc' ? 'desc' : 'asc'}) %}
+	<a href="{{ path('app_prod_list', queryParamsCreated|filter((value, key) => key != '_path')) }}">
+		Created {{ _self.sortArrow('createdAt', sort, direction) }}
+	</a>
+
+	{% set queryParamsUpdated = queryParams|merge({'sort': 'updatedAt', 'direction': sort == 'updatedAt' and direction == 'asc' ? 'desc' : 'asc'}) %}
+	<a href="{{ path('app_prod_list', queryParamsUpdated|filter((value, key) => key != '_path')) }}">
+		Updated {{ _self.sortArrow('updatedAt', sort, direction) }}
+	</a>
+</section>

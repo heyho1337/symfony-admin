@@ -23,7 +23,7 @@ class EvcCategory
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $category_name = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
