@@ -16,6 +16,7 @@ use App\Entity\EvcCategory;
 use App\Entity\EvcProduct;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[Route('/prod', name: 'app_prod_')]
 class ProductController extends AbstractController
@@ -31,25 +32,34 @@ class ProductController extends AbstractController
     public function list(
 		PaginatorInterface $paginator, 
 		EvcProductRepository $prodRepo,
+		EvcCategoryRepository $categRepo,
 		#[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] string $name = '',
 		#[MapQueryParameter] string $sort = 'createdAt',
 		#[MapQueryParameter] string $direction = 'ASC',
+		#[MapQueryParameter] string $categories = '',
 	): Response
     {
+		
 		$nameValue = $name;
-		$products = $prodRepo->getProductsWithFilters($nameValue, $sort, $direction);
+		$products = $prodRepo->getProductsWithFilters($nameValue, $sort, $direction, $categories);
 		$pagination = $paginator->paginate(
 			$products,
 			$page,
 			10
 		);
 
+		$selectedCategoryIds = $categories ? explode(',', $categories) : [];
+    	$categoryObject = new ArrayCollection($categRepo->findBy(['id' => $selectedCategoryIds]));
+
+		$extraInput = fn($builder) => $this->addCategorySelectFilter($builder,$categoryObject);
+
 		return $this->render('prod/list.html.twig', [
 			'pagination' => $pagination,
 			'nameValue' => $nameValue,
 			'sort' => $sort,
-			'direction' => $direction
+			'direction' => $direction,
+			'extraInput' => $extraInput
         ]);
     }
 
@@ -117,6 +127,24 @@ class ProductController extends AbstractController
 			'multiple' => true,
 			'expanded' => false,
 			'autocomplete' => true,
+			'attr' => ['data-label' => 'Categories']
+		]);
+	}
+
+	public function addCategorySelectFilter($builder, ArrayCollection $categories)
+	{
+		
+		$builder->add('prod_category', EntityType::class, [
+			'class' => EvcCategory::class,
+			'choice_label' => 'categoryName',
+			'label' => 'Categories',
+			'disabled' => false,
+			'required' => true,
+			'multiple' => true,
+			'expanded' => false,
+			'autocomplete' => true,
+			'attr' => ['data-label' => 'Categories', 'data-action' => 'search#categoryfilter'],
+			'data' => $categories
 		]);
 	}
 

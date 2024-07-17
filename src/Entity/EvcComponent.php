@@ -9,6 +9,7 @@ use App\Form\Type\TextType;
 use App\Form\Type\OnOffType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EvcComponentRepository::class)]
 class EvcComponent
@@ -30,6 +31,8 @@ class EvcComponent
     #[ORM\Column(length: 75, options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'app route name'])]
     private ?string $comp_alias = null;
 
+    #[Assert\Type('int')]
+	#[Assert\NotBlank]
 	#[Gedmo\SortablePosition]
     #[ORM\Column(nullable: true, options: ["formType" => TextType::class, 'required' => false, 'label' => 'Order'])]
     private ?int $position = null;

@@ -23,6 +23,10 @@ class SearchFormType extends AbstractType
 			'data_action' => 'list#namefilter',
 			'data' => $nameValue
 		]);
+
+		if($options['extraInput']){
+			$options['extraInput']($builder);
+		}
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -31,7 +35,8 @@ class SearchFormType extends AbstractType
             'entity_id' => null,
 			'url' => null,
 			'column_name' => null,
-			'name_value' => null
+			'name_value' => null,
+			'extraInput' => null
         ]);
 
 		$resolver->setRequired(['data_class', 'entity_id', 'url', 'column_name']);

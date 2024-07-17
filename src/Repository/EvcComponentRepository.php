@@ -7,8 +7,8 @@ namespace App\Repository;
 use App\Entity\EvcComponent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-use App\Service\CacheService;
+//use Psr\Log\LoggerInterface;
+//use App\Service\CacheService;
 
 /**
  * @extends ServiceEntityRepository<EvcComponent>

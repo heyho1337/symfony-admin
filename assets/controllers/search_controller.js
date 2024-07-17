@@ -10,7 +10,7 @@ import { visit } from '@hotwired/turbo';
  * Delete this file or adapt it for your use!
  */
 export default class extends Controller {
-	static targets = ['name'];
+	static targets = ['name', 'categories'];
 
     connect() {
 		const url = new URL(window.location.href);
@@ -31,6 +31,20 @@ export default class extends Controller {
 			url.searchParams.delete('name');
 		}
 
+		visit(url);
+	}
+
+	categoryfilter(event) {
+		const categoryValues = Array.from(this.categoriesTarget.children)
+			.filter(child => child.hasAttribute('data-value'))
+			.map(child => child.getAttribute('data-value'));
+		
+		const url = new URL(window.location.href);
+		url.searchParams.set('categories', categoryValues);
+		if (categoryValues.length == 0) {
+			url.searchParams.delete('categories');
+		}
+		console.log(url);
 		visit(url);
 	}
 }

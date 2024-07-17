@@ -6,10 +6,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FormService extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager, protected ValidatorInterface $validator)
     {
        
     }
@@ -74,9 +75,36 @@ class FormService extends AbstractController
 			}
 			
 			if (method_exists($entity, $method)) {
-				$entity->$method($value);
+				try {
+					$entity->$method($value);
+				}
+				catch (\TypeError $e) {
+					$reflectionMethod = new \ReflectionMethod($entity, $method);
+                    $parameters = $reflectionMethod->getParameters();
+                    $correctType = '';
+
+                    if (!empty($parameters)) {
+                        $expectedType = $parameters[0]->getType();
+
+                        if ($expectedType) {
+                            $correctType = $expectedType->getName();
+						}
+					}
+					$this->addFlash('error', "Invalid value for {$field}. Please use: {$correctType}");
+                    return false;
+                }
 			}
 		}
+
+		$errors = $this->validator->validate($entity);
+
+        if (count($errors) > 0) {
+            foreach ($errors as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
+
+            return false;
+        }
 		
         $this->entityManager->persist($entity);
         $this->entityManager->flush();

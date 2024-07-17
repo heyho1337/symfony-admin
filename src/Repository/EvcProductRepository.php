@@ -5,9 +5,11 @@ namespace App\Repository;
 use App\Entity\EvcProduct;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-use App\Service\CacheService;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
+
+//use Psr\Log\LoggerInterface;
+//use App\Service\CacheService;
+//use Doctrine\ORM\EntityManagerInterface;
 /**
  * @extends ServiceEntityRepository<EvcProduct>
  *
@@ -32,7 +34,7 @@ class EvcProductRepository extends ServiceEntityRepository
 		return $this->findBy(criteria: [],orderBy: ['createdAt' => 'ASC']);
     }
 
-	public function getProductsWithFilters(string $name = null, string $sort, string $direction): array
+	public function getProductsWithFilters(string $name = null, string $sort, string $direction, string $categories): array
     {
 		$query =  $this->createQueryBuilder('product');
 
@@ -44,8 +46,17 @@ class EvcProductRepository extends ServiceEntityRepository
 				->setParameter('name', '%' . $name . '%');
 		}
 
+		if ($categories != '') {
+			$selectedCategories = explode(",", $categories);
+			$query
+				->innerJoin('product.prod_category', 'category', Join::WITH, 'category.id IN (:selectedCategories)')
+				->setParameter('selectedCategories', $selectedCategories);
+		}
+
 		$query
 			->orderBy('product.'.$sort, $direction);
+
+		//dd($categories);
 
 		return $query->getQuery()->getResult();
     }

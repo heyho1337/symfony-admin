@@ -8,7 +8,7 @@
 
 <section data-controller="search" class="list prodList">
 	<h1>Products list</h1>
-	{{ render(controller('App\\Controller\\SearchController::search', { 'nameValue': nameValue, 'sort': sort, 'direction': direction })) }}
+	{{ render(controller('App\\Controller\\SearchController::search', { 'nameValue': nameValue, 'sort': sort, 'direction': direction, 'extraInput': extraInput })) }}
 	<ul>
 		{% for prod in pagination %}
 			<li>

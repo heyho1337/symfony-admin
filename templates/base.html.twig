@@ -22,9 +22,13 @@
             
 		{% endblock %}
     </head>
-	{% set msg = app.session.getFlashBag().get('notice') %}
-	{% if msg is defined and msg is not empty %}
-		{{ include('dialog_component.html.twig') }}
+	{% set notices = app.session.getFlashBag().get('notice') %}
+	{% if notices is defined and notices is not empty %}
+		{{ include('notice_component.html.twig') }}
+	{% endif %}
+	{% set errors = app.session.getFlashBag().get('error') %}
+	{% if errors is defined and errors is not empty %}
+		{{ include('error_component.html.twig') }}
 	{% endif %}
 
     <body class="has-[.login]:bg-gray-950">
