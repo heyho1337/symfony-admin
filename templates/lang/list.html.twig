@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Languages{% endblock %}
+
+{% block body %}
+
+
+<section class="list langList">
+    <h1>Language list</h1>
+	<ul>
+		{% for lang in langs %}
+			<li rel="{{ lang.Id }}">
+				<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_lang_page', {id: lang.Id}) }}" title="">
+					{{ lang.langName }}
+				</a>
+			</li>
+		{% endfor %}
+	<ul>
+</section>
+{% endblock %}

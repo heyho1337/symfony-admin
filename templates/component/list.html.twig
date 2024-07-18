@@ -2,15 +2,13 @@
 
 {% block title %}Components{% endblock %}
 
-{% block head %}{{parent()}} {{ knp_pagination_rel_links(pagination) }}{% endblock %}
-
 {% block body %}
 
 
 <section class="list compList">
     <h1>Component list</h1>
 	<ul data-controller="sort" data-sort-route-value="component">
-		{% for comp in pagination %}
+		{% for comp in components %}
 			<li draggable="true" data-sort-target="sortItem" rel="{{ comp.Id }}">
 				<i class="fa-solid fa-bars"></i>
 				<a class="transition duration-500 hover:text-cyan-300" href="{{ path('app_component_page', {id: comp.Id}) }}" title="">
@@ -19,8 +17,5 @@
 			</li>
 		{% endfor %}
 	<ul>
-	<div class="navigation">
-		{{ knp_pagination_render(pagination) }}
-	</div>
 </section>
 {% endblock %}

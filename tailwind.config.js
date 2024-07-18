@@ -11,5 +11,9 @@ module.exports = withMT({
 	theme: {
 		extend: {},
 	},
-	plugins: [],
+	plugins: [
+		function ({ addVariant }) {
+			addVariant('active', '&[active]');
+		}
+	],
 });

@@ -11,6 +11,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation\Slug;
 use App\Form\Type\TextType;
 use App\Form\Type\OnOffType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EvcCategoryRepository::class)]
 class EvcCategory
@@ -19,11 +20,12 @@ class EvcCategory
 	use TimestampableEntity;
 
 	#[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+                   #[ORM\GeneratedValue]
+                   #[ORM\Column]
+                   private ?int $id = null;
 
-    #[ORM\Column(length: 255, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
+    #[Assert\NotBlank]
+	#[ORM\Column(length: 255, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $category_name = null;
 
     #[ORM\Column(type: Types::SMALLINT, options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
@@ -44,9 +46,16 @@ class EvcCategory
 
 	private ?int $productCount = null;
 
+    /**
+     * @var Collection<int, EvcCategoryTranslation>
+     */
+    #[ORM\OneToMany(targetEntity: EvcCategoryTranslation::class, mappedBy: 'category_id')]
+    private Collection $category_translations;
+
     public function __construct()
     {
         $this->categoryProducts = new ArrayCollection();
+        $this->category_translations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,13 +139,43 @@ class EvcCategory
     }
 
 	public function getProductCount(): ?int
-    {
-        return $this->productCount;
-    }
+                   {
+                       return $this->productCount;
+                   }
 
     public function setProductCount(?int $productCount): static
     {
         $this->productCount = $productCount;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EvcCategoryTranslation>
+     */
+    public function getCategoryTranslations(): Collection
+    {
+        return $this->category_translations;
+    }
+
+    public function addCategoryTranslation(EvcCategoryTranslation $categoryTranslation): static
+    {
+        if (!$this->category_translations->contains($categoryTranslation)) {
+            $this->category_translations->add($categoryTranslation);
+            $categoryTranslation->setCategoryId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategoryTranslation(EvcCategoryTranslation $categoryTranslation): static
+    {
+        if ($this->category_translations->removeElement($categoryTranslation)) {
+            // set the owning side to null (unless already changed)
+            if ($categoryTranslation->getCategoryId() === $this) {
+                $categoryTranslation->setCategoryId(null);
+            }
+        }
+
         return $this;
     }
 }

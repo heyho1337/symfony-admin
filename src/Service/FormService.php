@@ -66,8 +66,11 @@ class FormService extends AbstractController
 	public function save($request, $entity, $setmethods = null): bool
 	{
 		$data = $request->request->all();
+		if(isset($data['form'])){
+			$data = $data['form'];
+		}
 
-		foreach ($data['form'] as $field => $value) {
+		foreach ($data as $field => $value) {
 			$method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
 			
 			if ($setmethods) {

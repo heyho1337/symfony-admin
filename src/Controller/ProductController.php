@@ -14,6 +14,7 @@ use App\Service\FormService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\EvcCategory;
 use App\Entity\EvcProduct;
+use App\Repository\EvcLangRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,7 +24,7 @@ class ProductController extends AbstractController
 {
     
 	public function __construct(
-        
+        protected EvcProductRepository $prodRepo
     ) {
 		
     }
@@ -31,7 +32,6 @@ class ProductController extends AbstractController
 	#[Route('', name: 'list')]
     public function list(
 		PaginatorInterface $paginator, 
-		EvcProductRepository $prodRepo,
 		EvcCategoryRepository $categRepo,
 		#[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] string $name = '',
@@ -42,7 +42,7 @@ class ProductController extends AbstractController
     {
 		
 		$nameValue = $name;
-		$products = $prodRepo->getProductsWithFilters($nameValue, $sort, $direction, $categories);
+		$products = $this->prodRepo->getProductsWithFilters($nameValue, $sort, $direction, $categories);
 		$pagination = $paginator->paginate(
 			$products,
 			$page,
@@ -66,11 +66,13 @@ class ProductController extends AbstractController
 	#[Route('/{slug}', name: 'page')]
     public function get(
         string $slug, 
-        EvcProductRepository $prodRepo, 
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+		EvcLangRepository $langRepo
     ): Response {
         $entityManager->getFilters()->enable('ActiveCategory');
-        $product = $prodRepo->getProductBySlug($slug);
+        $product = $this->prodRepo->getProductBySlug($slug);
+
+		$langs = $langRepo->getActiveLangs();
 
         $form = $this->createForm(
             FormType::class, 
@@ -90,6 +92,7 @@ class ProductController extends AbstractController
         return $this->render('prod/page.html.twig', [
             'product' => $product,
             'form' => $form->createView(),
+			'langs' => $langs
         ]);
     }
 
@@ -98,7 +101,6 @@ class ProductController extends AbstractController
 		Request $request, 
 		$slug, 
 		EntityManagerInterface $entityManager, 
-		EvcProductRepository $prodRepo,
 		EvcCategoryRepository $categRepo,
 		FormService $formService
 	): Response
@@ -106,7 +108,7 @@ class ProductController extends AbstractController
 		$entityManager->getFilters()
             ->enable('ActiveCategory');
 
-		$product = $prodRepo->getProductBySlug($slug);
+		$product = $this->prodRepo->getProductBySlug($slug);
 		$categories = $product->getProdCategory()->toArray();
 
 		$formService->save($request, $product, function($field, $value, $entity) use ($categories, $categRepo) {

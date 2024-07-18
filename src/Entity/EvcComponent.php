@@ -10,6 +10,7 @@ use App\Form\Type\OnOffType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: EvcComponentRepository::class)]
 class EvcComponent
@@ -22,10 +23,11 @@ class EvcComponent
 	#[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
     private ?int $id = null;
 
+	#[Assert\NotBlank]
     #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $comp_name = null;
 
-	#[ORM\Column(options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
+	#[ORM\Column(type: Types::SMALLINT,options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
 	private ?int $comp_active = null;
 
     #[ORM\Column(length: 75, options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'app route name'])]

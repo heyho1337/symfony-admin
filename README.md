@@ -1,8 +1,11 @@
 whats next
-	checkout redis cache pools
-	component list
-		allowed for only superadmin
-		component page
-			empty component cache
-		new component
-			empty component cache
+	translations
+		save route
+	product page
+		multi image upload
+			+ keycdn?
+		tabs
+		text editor desc
+	category page
+		text editor desc
+	new buttons for every component

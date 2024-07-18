@@ -5,10 +5,19 @@
 {% block body %}
 
 
-<section class="page prodPage">
+<section class="page prodPage" data-controller="tabs">
     <h1>Product page</h1>
-	<form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto" action="{{ path('app_prod_set', {slug: product.slug}) }}">
-        {{ form_widget(form) }}
-    </form>
+	{% set slug = product.slug %}
+	{% set type = 'prod' %}
+	{% set translations = product.productTranslations %}
+	{% include 'modules/tabs_head_module.html.twig' %}
+	<div class="p-5">
+		<div data-tabs-target="tabContent" active id="basics" class="hidden opacity-0 active:block active:opacity-100">
+			<form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto" action="{{ path('app_' ~ type ~ '_set', {slug: slug}) }}">
+				{{ form_widget(form) }}
+			</form>
+		</div>
+		{% include 'modules/tabs_content_module.html.twig' %}
+	</div>
 </section>
 {% endblock %}

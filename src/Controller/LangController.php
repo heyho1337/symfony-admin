@@ -7,15 +7,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
-use App\Repository\EvcComponentRepository;
+use App\Repository\EvcLangRepository;
 use App\Form\Type\FormType;
 use App\Service\FormService;
 
-#[Route('/component', name: 'app_component_')]
-class ComponentController extends AbstractController
+#[Route('/lang', name: 'app_lang_')]
+class LangController extends AbstractController
 {
     public function __construct(
-        protected EvcComponentRepository $compRepo
+        protected EvcLangRepository $langRepo
     ) {
 		
     }
@@ -23,27 +23,27 @@ class ComponentController extends AbstractController
 	#[Route('', name: 'list')]
     public function list(): Response
     {
-		$components = $this->compRepo->getAllComponents();
+		$langs = $this->langRepo->getAllLangs();
 
-		return $this->render('component/list.html.twig', [
-			'components' => $components
+		return $this->render('lang/list.html.twig', [
+			'langs' => $langs
         ]);
     }
 
 	#[Route('/{id}', name: 'page')]
     public function get($id): Response
     {
-		$component = $this->compRepo->getComponent($id);
+		$lang = $this->langRepo->getLang($id);
 		
 		$form = $this->createForm(
 			FormType::class, 
-			$component, 
-			['attr' => ['id' => $id, 'url' => '/component', 'classname' => \App\Entity\EvcComponent::class]],
-			['data_class' => \App\Entity\EvcComponent::class]
+			$lang, 
+			['attr' => ['id' => $id, 'url' => '/lang', 'classname' => \App\Entity\EvcLang::class]],
+			['data_class' => \App\Entity\EvcLang::class]
 		);
 
-		return $this->render('component/page.html.twig', [
-			'component' => $component,
+		return $this->render('lang/page.html.twig', [
+			'lang' => $lang,
 			'form' => $form->createView(),
         ]);
     }
@@ -51,8 +51,9 @@ class ComponentController extends AbstractController
 	#[Route('/set/{id}', name: 'set', methods: ['POST'])]
 	public function save(Request $request, $id, FormService $formService): Response
 	{
-		$component = $this->compRepo->getComponent($id);
-		$formService->save($request,$component);
-        return $this->redirectToRoute('app_component_page', ['id' => $id]);
+		$lang = $this->langRepo->getLang($id);
+		$formService->save($request,$lang);
+        return $this->redirectToRoute('app_lang_page', ['id' => $id]);
 	}
 }
+

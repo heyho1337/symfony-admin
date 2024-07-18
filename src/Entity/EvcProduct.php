@@ -13,6 +13,7 @@ use App\Form\Type\TextType;
 use App\Form\Type\MoneyType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation\Slug;
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: EvcProductRepository::class)]
 class EvcProduct
 {
@@ -22,33 +23,45 @@ class EvcProduct
 	#[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
-    private ?int $id = null;
+   	private ?int $id = null;
 
-    #[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
+    #[Assert\NotBlank]
+	#[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
     private ?string $prod_name = null;
 
     #[ORM\Column(options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $prod_active = null;
 
-    #[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
+    #[Assert\NotBlank]
+	#[Assert\Type('float')]
+	#[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
     private ?float $prod_price = null;
 
-    #[Slug(fields: ['prod_name'])]
+    #[Assert\NotBlank]
+	#[Slug(fields: ['prod_name'])]
 	#[ORM\Column(length: 100, unique: true, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Url'])]
     private ?string $slug = null;
 
     /**
      * @var Collection<int, EvcCategory>
      */
+	#[Assert\Count(min:1, minMessage: 'Pls choose atleast one category')]
     #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
     private Collection $prod_category;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $prod_description = null;
 
+    /**
+     * @var Collection<int, EvcLang>
+     */
+    #[ORM\OneToMany(targetEntity: EvcProductTranslation::class, mappedBy: 'prod_id')]
+    private Collection $product_translations;
+
     public function __construct()
     {
         $this->prod_category = new ArrayCollection();
+        $this->product_translations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,6 +149,36 @@ class EvcProduct
     public function setProductDescription(?string $prod_description): static
     {
         $this->prod_description = $prod_description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EvcLang>
+     */
+    public function getProductTranslations(): Collection
+    {
+        return $this->product_translations;
+    }
+
+    public function addProductTranslation(EvcLang $productTranslation): static
+    {
+        if (!$this->product_translations->contains($productTranslation)) {
+            $this->product_translations->add($productTranslation);
+            $productTranslation->setLangProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductTranslation(EvcLang $productTranslation): static
+    {
+        if ($this->product_translations->removeElement($productTranslation)) {
+            // set the owning side to null (unless already changed)
+            if ($productTranslation->getLangProduct() === $this) {
+                $productTranslation->setLangProduct(null);
+            }
+        }
 
         return $this;
     }

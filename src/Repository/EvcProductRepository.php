@@ -63,7 +63,14 @@ class EvcProductRepository extends ServiceEntityRepository
 
 	public function getProductBySlug(string $slug): EvcProduct
     {
-		$product = $this->findOneBy(['slug' => $slug]);
+		$product = $this->createQueryBuilder('product')
+            ->leftJoin('product.product_translations', 'translation')
+            ->addSelect('translation')
+            ->where('product.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+			->getOneOrNullResult();
+		
 		if (!$product) {
 			throw $this->createNotFoundException('Product not found');
 		}

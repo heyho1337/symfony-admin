@@ -96,7 +96,14 @@ class EvcCategoryRepository extends ServiceEntityRepository
 
 	public function getCategoryBySlug(string $slug): EvcCategory
     {
-		$category = $this->findOneBy(['slug' => $slug]);
+		$category = $this->createQueryBuilder('category')
+            ->leftJoin('category.category_translations', 'translation')
+            ->addSelect('translation')
+            ->where('category.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+			->getOneOrNullResult();
+		
 		if (!$category) {
 			throw $this->createNotFoundException('Category not found');
 		}

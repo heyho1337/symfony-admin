@@ -8,22 +8,27 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Repository\EvcCategoryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\Type\FormType;
 use App\Form\Type\SwitchFormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use App\DTO\EvcCategoryExtended;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use App\Service\FormService;
+use App\Repository\EvcLangRepository;
 
 #[Route('/category', name: 'app_category_')]
 class CategoryController extends AbstractController
 {
 
+	public function __construct(
+        protected EvcCategoryRepository $categRepo
+    ) {
+		
+    }
+	
 	#[Route('', name: 'list')]
     public function list(
 		PaginatorInterface $paginator, 
-		EvcCategoryRepository $categRepo,
 		FormFactoryInterface $formFactory,
 		#[MapQueryParameter] int $page = 1,
         #[MapQueryParameter] string $name = '',
@@ -33,7 +38,7 @@ class CategoryController extends AbstractController
     {
 		
 		$nameValue = $name;
-		$categories = $categRepo->getCategoriesWithFilters($nameValue, $sort, $direction);
+		$categories = $this->categRepo->getCategoriesWithFilters($nameValue, $sort, $direction);
 		$pagination = $paginator->paginate(
 			$categories,
 			$page,
@@ -52,10 +57,11 @@ class CategoryController extends AbstractController
     }
 
 	#[Route('/{slug}', name: 'page')]
-    public function get($slug, EvcCategoryRepository $categRepo): Response
+    public function get($slug, EvcLangRepository $langRepo): Response
     {
 		
-		$category = $categRepo->getCategoryBySlug($slug);
+		$category = $this->categRepo->getCategoryBySlug($slug);
+		$langs = $langRepo->getActiveLangs();
 		
 		$form = $this->createForm(
 			FormType::class, 
@@ -67,13 +73,14 @@ class CategoryController extends AbstractController
 		return $this->render('category/page.html.twig', [
 			'category' => $category,
 			'form' => $form->createView(),
+			'langs' => $langs
         ]);
     }
 
 	#[Route('/set/{slug}', name: 'set', methods: ['POST'])]
-	public function save(Request $request, $slug, EvcCategoryRepository $categRepo, FormService $formService): Response
+	public function save(Request $request, $slug, FormService $formService): Response
 	{
-		$category = $categRepo->getCategoryBySlug($slug);
+		$category = $this->categRepo->getCategoryBySlug($slug);
 		$formService->save($request,$category);
         return $this->redirectToRoute('app_category_page', ['slug' => $category->getSlug()]);
 	}
