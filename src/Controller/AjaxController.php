@@ -37,8 +37,8 @@ class AjaxController extends AbstractController
         $entity = $repo->{"get" . ucfirst($controller)}($id);
 
         // Find the active method dynamically
-        $getMethod = $this->findGetMethod($entity);
-		$setMethod = $this->findSetMethod($entity);
+        $getMethod = $this->findActiveGetMethod($entity);
+		$setMethod = $this->findActiveSetMethod($entity);
 
         if ($getMethod) {
             $activeStatus = $entity->$getMethod();
@@ -64,7 +64,7 @@ class AjaxController extends AbstractController
 		return $this->entityManager->getRepository("App\Entity\Evc{$upperName}");
 	}
 
-    private function findGetMethod($entity): ?string
+    private function findActiveGetMethod($entity): ?string
     {
         $reflection = new \ReflectionClass($entity);
         foreach ($reflection->getMethods() as $method) {
@@ -75,7 +75,7 @@ class AjaxController extends AbstractController
         return null;
     }
 
-	private function findSetMethod($entity): ?string
+	private function findActiveSetMethod($entity): ?string
 	{
 		$reflection = new \ReflectionClass($entity);
 		foreach ($reflection->getMethods() as $method) {

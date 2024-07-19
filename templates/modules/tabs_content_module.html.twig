@@ -1,19 +1,19 @@
 {% for lang in langs %}
-			<form method="post" data-tabs-target="tabContent" id="{{ lang.langCode }}" action="{{ path('app_translation_set', {slug: slug, type: type}) }}" class="hidden opacity-0 active:block active:opacity-100 form grid gap-y-4 w-full max-w-[95svw] mx-auto">
-				{{ lang.langName }} tab content
-				{% set translationsByLangs = translations|filter(item => item.transLang == lang.langCode) %}
-				{% for translation in translationsByLangs %}
-					{# translations where the trans_lang is qeual to the lang.langCode #}
-					{% include 'form/' ~ translation.transType ~ '_custom.html.twig' with {
-						'full_name':translation.id, 
-						'id': translation.transColumn,
-						'required': true,
-						'disabled': false,
-						'data_action': false,
-						'value': translation.transText,
-						'label': translation.transLabel
-					} %}
-				{% endfor %}
-				<button type="submit" name="save">Save</button>
-			</form>
+	<form method="post" data-tabs-target="tabContent" id="{{ lang.langCode }}" action="{{ path('app_translation_set', {slug: slug, type: type}) }}" class="hidden opacity-0 active:block active:opacity-100 form grid gap-y-4 w-full max-w-[95svw] mx-auto">
+		{{ lang.langName }} tab content
+		{% set translationsByLangs = translations|filter(item => item.transLang == lang.langCode) %}
+		{% for translation in translationsByLangs %}
+			{# translations where the trans_lang is qeual to the lang.langCode #}
+			{% include 'form/' ~ translation.transType ~ '_custom.html.twig' with {
+				'full_name':translation.id, 
+				'id': translation.transColumn,
+				'required': true,
+				'disabled': false,
+				'data_action': false,
+				'value': translation.transText,
+				'label': translation.transLabel
+			} %}
 		{% endfor %}
+		<button type="submit" name="save">Save</button>
+	</form>
+{% endfor %}
