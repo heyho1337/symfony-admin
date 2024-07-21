@@ -1,4 +1,14 @@
-This is a symfony easyadmin project. 
+# This is a symfony easyadmin project. 
+## Will be editing and formatting this soon
+### Stack
+```
+symfony
+easyadmin
+turbo-ux
+stimulus
+tailwind
+mysql
+```
 The UI will be fully updated to use tailwind, and stimulus for custom controller functions. 
 For now I have merged the basic css with tailwind using scss and css cascade layers.
 This way I can add talwind classes, modify the bacis css and add uniq css code if needed.
