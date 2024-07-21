@@ -2,8 +2,12 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\EvcProduct;
+use App\Entity\EvcCategory;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Form;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -13,41 +17,31 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use App\Repository\EvcCategoryRepository;
-use App\Entity\EvcCategory;
-class EvcProductCrudController extends AbstractCrudController
+
+class EvcCategoryCrudController extends AbstractCrudController
 {
-    public function __construct(protected EvcCategoryRepository $categRepo)
+    public static function getEntityFqcn(): string
     {
-        
-    }
-	
-	public static function getEntityFqcn(): string
-    {
-        return EvcProduct::class;
+        return EvcCategory::class;
     }
 
-	public function configureFilters(Filters $filters): Filters
+    public function configureCrud(Crud $crud): Crud
     {
-		return $filters
-		->add(EntityFilter::new('prod_category','Categories')
-			->canSelectMultiple(true)
-		)
-        ;
+        return $crud
+            // Customize as needed
+            ->setPageTitle(Crud::PAGE_INDEX, 'Categories')
+            ->setPageTitle(Crud::PAGE_EDIT, 'Edit Category');
     }
-    
+
     public function configureFields(string $pageName): iterable
     {
 		return [
 
 			//edit page
-			TextEditorField::new('product_description')
+			TextField::new('categoryName')
 				->hideOnIndex(),
-			TextField::new('prodName')
-				->hideOnIndex(),
-			ChoiceField::new('prod_active', 'Active')
+			ChoiceField::new('category_active', 'Active')
 				->hideOnIndex()
 				->setChoices([
 					'Yes' => '1',
@@ -59,31 +53,21 @@ class EvcProductCrudController extends AbstractCrudController
 			DateTimeField::new('updatedAt','Updated')
 				->setDisabled()
 				->hideOnIndex(),
-			AssociationField::new('prod_category','Categories')
-				->hideOnIndex()
-				->autocomplete()
-				->setCrudController(EvcCategoryCrudController::class),
 
 			//index page
             IdField::new('id')
 				->hideOnForm(),
-            UrlField::new('prod_name','Product Name')
+            UrlField::new('category_name','Category Name')
 				->setTemplatePath('admin/fields/link_to_edit.html.twig')
 				->setSortable(true)
 				->hideOnForm(),
-            BooleanField::new('prod_active', 'Active')
+            BooleanField::new('category_active', 'Active')
 				->setSortable(true)
 				->hideOnForm(),
 			DateTimeField::new('createdAt','Created')
 				->hideOnForm(),
 			DateTimeField::new('updatedAt','Updated')
 				->hideOnForm(),
-
-			//both
-			MoneyField::new('prodPrice','Price')
-				->setSortable(true)
-				->setCustomOption('currency', 'USD')
         ];
     }
-    
 }

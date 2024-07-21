@@ -1,0 +1,33 @@
+#filters_prod_category{
+	> div{
+		&:first-child{
+			display:none;
+		}
+	} 
+}
+.datagrid-filters{
+	display:none !important;
+}
+.filter-heading{
+	display:none !important;
+}
+.customFilters{
+	.filter-field{
+		&.px-3{
+			padding:0px !important;
+			padding-left:0px !important;
+			padding-right:0px !important;
+		}
+	}
+	#filter-content-1{
+		margin:0px !important;
+		padding:0px !important;
+		.form-widget{
+			.form-widget-compound{
+				.form-group{
+					padding:0px !important;
+				}
+			}
+		}
+	}
+}

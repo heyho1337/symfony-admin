@@ -1,0 +1,61 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var paginator \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator #}
+{% trans_default_domain 'EasyAdminBundle' %}
+
+<div class="list-pagination">
+    <div class="list-pagination-counter">
+        {% if render_detailed_pagination is defined ? render_detailed_pagination : true %}
+            {{ 'paginator.results'|trans({'%count%': paginator.numResults|format})|raw }}
+        {% endif %}
+    </div>
+    {% if paginator.hasPreviousPage or paginator.hasNextPage %}
+        <nav class="flex items-center gap-4">
+            <a 
+				{{ not paginator.hasPreviousPage ? 'disabled' }}
+				class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+				href="{{ not paginator.hasPreviousPage ? '#' : paginator.generateUrlForPage(paginator.previousPage) }}"
+			>
+                <i class="fa fa-angle-left mx-1"></i> 
+				{{ 'paginator.previous'|trans }}
+            </a>
+    
+            {% if render_detailed_pagination is defined ? render_detailed_pagination : true %}
+                {% for page in paginator.pageRange %}
+						<a 
+							{{ page == paginator.currentPage ? 'active' }} 
+							{% if page == paginator.currentPage %}
+								class="relative grid items-center h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							{% else %}
+								class="relative grid items-center h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							{% endif %}
+							{{ page is null ? 'disabled' }}
+							{% if page is null %}
+								href=""
+							{% else %}
+                                href="{{ paginator.generateUrlForPage(page) }}"
+                            {% endif %}
+						>
+							{{ page }}
+						</a>
+                    {% endfor %}
+                {% else %}
+					<a 
+						active
+						{{ paginator.currentPage is null ? 'disabled' }}
+						class="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+						href="{{ paginator.generateUrlForPage(paginator.currentPage) }}"
+						>
+							{{ paginator.currentPage }}
+						</a>
+                {% endif %}
+				<a
+					class="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+					{{ not paginator.hasNextPage ? 'disabled' }}
+					href="{{ not paginator.hasNextPage ? '#' : paginator.generateUrlForPage(paginator.nextPage) }}"
+				>
+					{{ 'paginator.next'|trans }}
+					<i class="fa fa-angle-right mx-1"></i>
+				</a>
+        </nav>
+    {% endif %}
+</div>

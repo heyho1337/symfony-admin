@@ -25,3 +25,76 @@
     {{ parent() }}
 	{{ encore_entry_script_tags('app') }}
 {% endblock head_javascript %}
+
+{% block customFilters %}
+    {% if filters|length > 0 %}
+        <div class="datagrid-filters">
+            {% block filters %}
+                {% set applied_filters = ea.request.query.all['filters']|default([])|keys %}
+                <div class="btn-group action-filters">
+                    <a href="#" 
+                       data-href="{{ ea_url().setAction('renderFilters') }}" 
+                       class="btn btn-secondary btn-labeled btn-labeled-right action-filters-button disabled {{ applied_filters ? 'action-filters-applied' }}" 
+                       data-bs-toggle="modal" data-bs-target="#modal-filters"
+                       data-filter-target="filterButton">
+                        <i class="fa fa-filter fa-fw"></i> {{ t('filter.title', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                        {% if applied_filters %}
+                            <span class="action-filters-button-count">({{ applied_filters|length }})</span>
+                        {% endif %}
+                    </a>
+                    {% if applied_filters %}
+                        <a href="{{ ea_url().unset('filters') }}" class="btn btn-secondary action-filters-reset">
+                            <i class="fa fa-close"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endblock filters %}
+        </div>
+    {% endif %}
+	<section class="filters" data-controller="filter">
+    	<div class="customFilters" id="sidebar-filters" 
+             data-filter-target="filtersContainer"
+             data-href="{{ ea_url().setAction('renderFilters') }}">
+    	</div>
+	</section>
+{% endblock %}
+
+{% block searchInput %}
+	<div class="w-72">
+		<div class="relative w-full min-w-[200px] h-10">
+			<button
+				class="absolute right-[5px] top-[10px]" 
+				id="sidebar-filters-apply" 
+				data-filter-target="applyButton" 
+				data-action="click->filter#applyFilters">
+					<i class="fas fa-search content-search-icon"></i>
+			</button>
+			<input 
+				class="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900 
+				{{ app.request.get('query') is null ? 'is-blank' }}" 
+				type="search" 
+				name="query" 
+				value="{{ app.request.get('query') ?? '' }}" 
+				spellcheck="false" 
+				autocorrect="off" 
+				onInput="this.parentNode.dataset.value=this.value"
+				{% if ea.crud.currentAction == 'index' and ea.crud.autofocusSearch == true %} 
+					autofocus="autofocus"
+				{% endif %}
+			>
+			<label 
+				class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900"
+				data-value="{{ app.request.get('query') }}"
+			>
+				Search
+			</label>
+			{#
+			{% if app.request.get('query') %}
+				<a href="{{ ea_url().unset('query') }}" class="content-search-reset">
+					<i class="fas fa-fw fa-times"></i>
+				</a>
+			{% endif %}
+			#}
+		</div>
+	</div>
+{% endblock %}

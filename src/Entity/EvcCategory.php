@@ -20,9 +20,9 @@ class EvcCategory
 	use TimestampableEntity;
 
 	#[ORM\Id]
-                   #[ORM\GeneratedValue]
-                   #[ORM\Column]
-                   private ?int $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+	private ?int $id = null;
 
     #[Assert\NotBlank]
 	#[ORM\Column(length: 255, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
@@ -61,6 +61,11 @@ class EvcCategory
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+	public function __toString(): string
+    {
+        return $this->category_name; // Or any other field that provides a meaningful string representation
     }
 
     public function getCategoryName(): ?string

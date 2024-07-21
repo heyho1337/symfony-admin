@@ -8,11 +8,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Symfony\Bundle\SecurityBundle\Security;
 use App\Entity\EvcProduct;
+use App\Entity\EvcCategory;
 
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    
+	public function __construct(protected Security $security)
+    {
+        
+    }
+	
+	#[Route('/admin', name: 'admin')]
     public function index(): Response
     {
        	return $this->render('admin/index.html.twig');
@@ -49,9 +57,15 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        return [
-			MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
-			MenuItem::linkToCrud('Products', 'fa fa-question-circle', EvcProduct::class)
-		];
+		$menuItems = [
+            MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
+        ];
+
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            $menuItems[] = MenuItem::linkToCrud('Products', 'fa fa-question-circle', EvcProduct::class);
+			$menuItems[] = MenuItem::linkToCrud('Categories', 'fa fa-question-circle', EvcCategory::class);
+        }
+
+        return $menuItems;
     }
 }
