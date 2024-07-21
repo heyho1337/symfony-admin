@@ -1,0 +1,27 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% set user_menu_dropdown %}
+    <span class="user-label">{{ 'user.logged_in_as'|trans(domain = 'EasyAdminBundle') }}</span>
+    <span class="user-name">{{ ea.user is null ? 'user.anonymous'|trans(domain = 'EasyAdminBundle') : ea.userMenu.name }}</span>
+{% endset %}
+
+{% block header_custom_menu_wrapper %}
+	{% if ea.userMenu.isNameDisplayed %}
+		<span class="user-name">{{ ea.userMenu.name }}</span>
+	{% endif %}
+{% endblock header_custom_menu_wrapper %}
+
+{% block head_metas %}
+	{{ parent() }}
+	<meta name="view-transition">
+{% endblock %}
+
+{% block head_stylesheets %}
+	{{ ux_controller_link_tags() }}
+	<link rel="stylesheet" href="{{ asset('build/app.css') }}">
+{% endblock %}
+
+{% block head_javascript %}
+    {{ parent() }}
+	{{ encore_entry_script_tags('app') }}
+{% endblock head_javascript %}

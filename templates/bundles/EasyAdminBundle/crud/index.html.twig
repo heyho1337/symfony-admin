@@ -1,0 +1,13 @@
+{% extends '@!EasyAdmin/crud/index.html.twig' %}
+
+{% block entity_actions %}
+    <td class="actions">
+        {% if entity.actions.count > 0 %}
+            {% for action in entity.actions %}
+				{% if action.name != 'edit' %}
+                	{{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
+				{% endif %}
+            {% endfor %}                       
+        {% endif %}
+    </td>
+{% endblock entity_actions %}
