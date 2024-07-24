@@ -5,110 +5,77 @@ namespace App\Entity;
 use App\Repository\EvcProductTranslationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Slug;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Form\Type\TextType;
+use Knp\DoctrineBehaviors\Contract\Entity\TranslationInterface;
+use Knp\DoctrineBehaviors\Model\Translatable\TranslationTrait;
 
 #[ORM\Entity(repositoryClass: EvcProductTranslationRepository::class)]
-class EvcProductTranslation
+class EvcProductTranslation implements TranslationInterface
 {
+    use TranslationTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(length: 75)]
-    private ?string $trans_column = null;
-
-    #[ORM\Column(length: 5)]
-    private ?string $trans_lang = null;
-	
-    #[ORM\ManyToOne(inversedBy: 'product_translations')]
-    private ?EvcProduct $prod_id = null;
+    private ?string $prod_name = null;
 
     #[Assert\NotBlank]
-	#[ORM\Column(type: Types::TEXT, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
-    private ?string $trans_text = null;
-
+    #[Slug(fields: ['prod_name'])]
     #[ORM\Column(length: 75)]
-    private ?string $trans_label = null;
+    private ?string $slug = null;
 
-    #[ORM\Column(length: 75)]
-    private ?string $trans_type = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $prod_description = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTransColumn(): ?string
+    public function getProdName(): ?string
     {
-        return $this->trans_column;
+        return $this->prod_name;
     }
 
-    public function setTransColumn(string $trans_column): static
+    public function setProdName(string $prod_name): static
     {
-        $this->trans_column = $trans_column;
+        $this->prod_name = $prod_name;
 
         return $this;
     }
 
-    public function getTransLang(): ?string
+    public function getProdDescription(): ?string
     {
-        return $this->trans_lang;
+        return $this->prod_description;
     }
 
-    public function setTransLang(string $trans_lang): static
+    public function setProdDescription(string $prod_description): static
     {
-        $this->trans_lang = $trans_lang;
+        $this->prod_description = $prod_description;
 
         return $this;
     }
 
-    public function getProdId(): ?int
+    public function getSlug(): ?string
     {
-        return $this->prod_id;
+        return $this->slug;
     }
 
-    public function setProdId(int $prod_id): static
+    public function setSlug(string $slug): static
     {
-        $this->prod_id = $prod_id;
+        $this->slug = $slug;
 
         return $this;
     }
 
-    public function getTransText(): ?string
+    public function __toString(): string
     {
-        return $this->trans_text;
-    }
-
-    public function setTransText(string $trans_text): static
-    {
-        $this->trans_text = $trans_text;
-
-        return $this;
-    }
-
-    public function getTransLabel(): ?string
-    {
-        return $this->trans_label;
-    }
-
-    public function setTransLabel(string $trans_label): static
-    {
-        $this->trans_label = $trans_label;
-
-        return $this;
-    }
-
-    public function getTransType(): ?string
-    {
-        return $this->trans_type;
-    }
-
-    public function setTransType(string $trans_type): static
-    {
-        $this->trans_type = $trans_type;
-
-        return $this;
+        return $this->prod_name ?? '';
     }
 }
+

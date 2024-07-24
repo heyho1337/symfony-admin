@@ -7,12 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\TextEditorType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\Form\Type\OnOffType;
-use App\Form\Type\TextType;
 use App\Form\Type\MoneyType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Gedmo\Mapping\Annotation\Slug;
 use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: EvcProductRepository::class)]
 class EvcProduct
@@ -26,21 +26,20 @@ class EvcProduct
    	private ?int $id = null;
 
     #[Assert\NotBlank]
-	#[ORM\Column(length: 75, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
-    private ?string $prod_name = null;
+	#[ORM\Column(type: 'json',length: 75, options: ["formType" => 'text', 'required' => true, 'label' => 'Name'])]
+    private ?array $prod_name = [];
 
     #[ORM\Column(options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
     private ?bool $prod_active = null;
 
     #[Assert\NotBlank]
 	#[Assert\Type('float')]
-	#[ORM\Column(options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
+	#[ORM\Column(type: 'float',options: ["formType" => MoneyType::class, 'required' => true, 'label' => 'Price'])]
     private ?float $prod_price = null;
 
     #[Assert\NotBlank]
-	#[Slug(fields: ['prod_name'])]
-	#[ORM\Column(length: 100, unique: true, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Url'])]
-    private ?string $slug = null;
+	#[ORM\Column(type: 'json',length: 100, unique: true, options: ["formType" => 'text', 'required' => true, 'label' => 'Url'])]
+    private ?array $prod_url = [];
 
     /**
      * @var Collection<int, EvcCategory>
@@ -49,19 +48,13 @@ class EvcProduct
     #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
     private Collection $prod_category;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $prod_description = null;
+    #[ORM\Column(type: 'json', nullable: true, options: ["formType" => 'textarea', 'required' => false, 'label' => 'Description'])]
+    private ?array $prod_description = [];
 
-    /**
-     * @var Collection<int, EvcLang>
-     */
-    #[ORM\OneToMany(targetEntity: EvcProductTranslation::class, mappedBy: 'prod_id')]
-    private Collection $product_translations;
 
     public function __construct()
     {
         $this->prod_category = new ArrayCollection();
-        $this->product_translations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,12 +62,12 @@ class EvcProduct
         return $this->id;
     }
 
-    public function getProdName(): ?string
+    public function getProdName(): ?array
     {
         return $this->prod_name;
     }
 
-    public function setProdName(string $prod_name): static
+    public function setProdName(array $prod_name): static
     {
         $this->prod_name = $prod_name;
 
@@ -105,14 +98,14 @@ class EvcProduct
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getProdUrl(): ?array
     {
-        return $this->slug;
+        return $this->prod_url;
     }
 
-    public function setSlug(string $slug): static
+    public function setProdUrl(array $prod_url): static
     {
-        $this->slug = $slug;
+        $this->prod_url = $prod_url;
 
         return $this;
     }
@@ -141,44 +134,14 @@ class EvcProduct
         return $this;
     }
 
-    public function getProductDescription(): ?string
+    public function getProdDescription(): ?array
     {
         return $this->prod_description;
     }
 
-    public function setProductDescription(?string $prod_description): static
+    public function setProdDescription(?array $prod_description): static
     {
         $this->prod_description = $prod_description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, EvcLang>
-     */
-    public function getProductTranslations(): Collection
-    {
-        return $this->product_translations;
-    }
-
-    public function addProductTranslation(EvcLang $productTranslation): static
-    {
-        if (!$this->product_translations->contains($productTranslation)) {
-            $this->product_translations->add($productTranslation);
-            $productTranslation->setLangProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductTranslation(EvcLang $productTranslation): static
-    {
-        if ($this->product_translations->removeElement($productTranslation)) {
-            // set the owning side to null (unless already changed)
-            if ($productTranslation->getLangProduct() === $this) {
-                $productTranslation->setLangProduct(null);
-            }
-        }
 
         return $this;
     }

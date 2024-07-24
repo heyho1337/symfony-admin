@@ -1,0 +1,32 @@
+<div class="w-full">
+    <div class="relative right-0">
+        <ul class="relative flex flex-wrap p-1 list-none rounded-lg bg-blue-gray-50/60" role="list">
+            <li class="z-30 flex-auto text-center">
+                <a class="z-30 flex items-center justify-center w-full px-0 py-1 mb-0 transition-all ease-in-out border-0 rounded-lg cursor-pointer text-slate-700 bg-inherit"
+                   href="#"
+                   data-action="click->tabs#selectTab"
+                   data-tab-target="basics"
+                   data-tabs-target="tabLink">
+					<span active class="ml-1 z-30 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-1 transition-all ease-in-out active:bg-white text-slate-700">
+						Basics
+					</span>
+                </a>
+            </li>
+            {% block extraHeadTabs %}
+            {% endblock %}
+            {% for lang in langs %}
+                <li class="z-30 flex-auto text-center">
+                    <a class="z-30 flex items-center justify-center w-full px-0 py-1 mb-0 transition-all ease-in-out border-0 rounded-lg cursor-pointer text-slate-700 bg-inherit"
+                       href="#"
+                       data-action="click->tabs#selectTab"
+                       data-tab-target="{{ lang.langCode }}"
+                       data-tabs-target="tabLink">
+						<span class="ml-1 z-30 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-1 transition-all ease-in-out active:bg-white text-slate-700">
+							{{ lang.langName }}
+						</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

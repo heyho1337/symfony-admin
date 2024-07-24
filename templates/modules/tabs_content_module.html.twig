@@ -1,0 +1,18 @@
+{% for lang in langs %}
+    <form method="post" data-tabs-target="tabContent" id="{{ lang.langCode }}"
+        class="hidden opacity-0 active:block active:opacity-100 form grid gap-y-4 w-full max-w-[95svw] mx-auto">
+        {{ lang.langName }} tab content
+        {% for translationValue in langFields %}
+            {% set value = translationValue.value[lang.langCode] %}
+            {% include 'admin/fields/' ~ translationValue.type ~ '.html.twig' with {
+                'full_name':translationValue.name,
+                'id': translationValue.name,
+                'required': translationValue.required,
+                'disabled': false,
+                'value': value,
+                'label': translationValue.label
+            } %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endfor %}

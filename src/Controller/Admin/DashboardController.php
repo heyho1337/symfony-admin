@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -11,10 +12,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Entity\EvcProduct;
 use App\Entity\EvcCategory;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 
 class DashboardController extends AbstractDashboardController
 {
-    
+
 	public function __construct(protected Security $security)
     {
         
@@ -50,22 +52,27 @@ class DashboardController extends AbstractDashboardController
 
 	public function configureCrud(): Crud
     {
-        return Crud::new()
+        $crud = Crud::new()
 			->showEntityActionsInlined()
         ;
+        if(isset($_GET['crudAction'])) {
+            if ($_GET['crudAction'] === Action::EDIT || $_GET['crudAction'] === Action::NEW) {
+                $crud->setSearchFields(null);
+            }
+        }
+
+		return $crud;
     }
 
     public function configureMenuItems(): iterable
     {
-		$menuItems = [
+        return [
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
+            MenuItem::linkToCrud('Components', 'fa fa-question-circle', EvcCategory::class)
+                ->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('Products', 'fa fa-question-circle', EvcProduct::class),
+            MenuItem::linkToCrud('Categories', 'fa fa-question-circle', EvcCategory::class)
         ];
-
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
-            $menuItems[] = MenuItem::linkToCrud('Products', 'fa fa-question-circle', EvcProduct::class);
-			$menuItems[] = MenuItem::linkToCrud('Categories', 'fa fa-question-circle', EvcCategory::class);
-        }
-
-        return $menuItems;
     }
+
 }

@@ -1,0 +1,22 @@
+{% extends '@!EasyAdmin/crud/edit.html.twig' %}
+{% block edit_form %}
+    {% set langs = app.request.attributes.get('langs') %}
+    <section class="page prodPage" data-controller="tabs">
+        {% block tabsHeadWrapper %}
+            {% embed 'modules/tabs_head_module.html.twig' %}
+                {% block extraHeadTabs %}
+
+                {% endblock %}
+            {% endembed %}
+        {% endblock %}
+        <div data-tabs-target="tabContent" active id="basics" class="hidden opacity-0 active:block active:opacity-100">
+            <form method="post" class="form grid gap-y-4 w-full max-w-[95svw] mx-auto">
+                {# action="{{ path('app_' ~ type ~ '_set', {slug: slug}) }}" #}
+                {{ form(edit_form) }}
+            </form>
+        </div>
+        {% block extraTabContent %}
+        {% endblock %}
+        {% include 'modules/tabs_content_module.html.twig' %}
+    </section>
+{% endblock edit_form %}

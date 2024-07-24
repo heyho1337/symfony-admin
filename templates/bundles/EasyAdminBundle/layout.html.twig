@@ -27,7 +27,7 @@
 {% endblock head_javascript %}
 
 {% block customFilters %}
-    {% if filters|length > 0 %}
+	{% if filters|length > 0 %}
         <div class="datagrid-filters">
             {% block filters %}
                 {% set applied_filters = ea.request.query.all['filters']|default([])|keys %}
