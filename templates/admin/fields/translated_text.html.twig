@@ -1,0 +1,13 @@
+{# templates/admin/fields/translated_text.html.twig #}
+{% extends '@EasyAdmin/crud/field.html.twig' %}
+
+{% block field %}
+    {# Get the custom language option #}
+    {% set lang = field.customOptions.lang %}
+
+    {# Render the value using a method in the entity #}
+    <div class="form-group">
+        <label>{{ field.label }}</label>
+        <input type="text" value="{{ entity.getProdNameTranslated(lang) }}" class="form-control" readonly>
+    </div>
+{% endblock %}

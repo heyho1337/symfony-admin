@@ -8,6 +8,7 @@ module.exports = withMT({
 		"./assets/**/*.css",
 		"./templates/**/*.twig",
 		"./templates/**/**/*.twig",
+		"./templates/**/**/**/*.twig",
 	],
 	theme: {
 		extend: {},

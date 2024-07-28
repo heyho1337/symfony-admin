@@ -1,0 +1,14 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# This template checks for 'ea' variable existence because it can
+   be used in a EasyAdmin Dashboard controller, where 'ea' is defined
+   or from any other Symfony controller, where 'ea' is not defined #}
+{% trans_default_domain ea is defined ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
+
+{% set notices = app.session.getFlashBag().get('notice') %}
+{% if notices is defined and notices is not empty %}
+    {{ include('admin/modules/notice_module.html.twig') }}
+{% endif %}
+{% set errors = app.session.getFlashBag().get('error') %}
+{% if errors is defined and errors is not empty %}
+    {{ include('admin/modules/error_module.html.twig') }}
+{% endif %}

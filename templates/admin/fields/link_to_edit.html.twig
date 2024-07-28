@@ -4,9 +4,4 @@
 {# NOTE: the rel="noopener" attr is needed to avoid performance and security issues
   (see https://web.dev/external-anchors-use-rel-noopener/) #}
 {% set route = entity.actions['edit'].linkUrl %}
-{% set langData = field.value|json_decode %}
-{% set name = '' %}
-{% if langData.en is defined %}
-    {% set name = langData.en %}
-{% endif %}
-<a rel="noopener" href="{{ route }}">{{ name }}</a>
+<a rel="noopener" href="{{ route }}">{{ field.value }}</a>

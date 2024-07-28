@@ -24,17 +24,20 @@ use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\EvcProductRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Service\FieldService;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 class EvcProductCrudController extends AbstractCrudController
 {
 
     private array $langFields = [];
+    protected FieldService $fieldService;
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected EvcProductRepository $prodRepo,
-        protected RequestStack $requestStack
+        protected RequestStack $requestStack,
     )
     {
-
+        $this->fieldService = new FieldService($this->requestStack,$this->entityManager);
     }
 	
 	public static function getEntityFqcn(): string
@@ -47,6 +50,7 @@ class EvcProductCrudController extends AbstractCrudController
 
         $crud
             ->overrideTemplate('crud/edit', 'admin/product/edit.html.twig');
+
         return $crud;
     }
 
@@ -58,86 +62,71 @@ class EvcProductCrudController extends AbstractCrudController
 		)
         ;
     }
-
-    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
-    {
-        $langFields = [];
-        $request = $this->requestStack->getCurrentRequest();
-        $entityInstance = $request->attributes->get('easyadmin_context')->getEntity()->getInstance();
-
-        if ($entityInstance) {
-            $entityClass = $this->getEntityFqcn();
-            $entityMetadata = $this->entityManager->getClassMetadata($entityClass);
-            $fields = $entityMetadata->fieldMappings;
-
-            foreach ($fields as $field) {
-                if ($field['type'] === 'json') {
-                    $fieldNameArray = explode("_", $field['fieldName']);
-                    $fieldName = "get" . ucfirst($fieldNameArray[0]) . ucfirst($fieldNameArray[1]);
-                    $fieldValue = $entityInstance->$fieldName();
-                    $options = $field['options'];
-                    $fieldClass = new \stdClass();
-                    $fieldClass->type = $options['formType'];
-                    $fieldClass->name = $field['fieldName'];
-                    $fieldClass->label = $options['label'];
-                    $fieldClass->required = $options['required'];
-                    $fieldClass->id = $field['fieldName'];
-                    $fieldClass->value = $fieldValue;
-                    $langFields[] = $fieldClass;
-                }
-            }
-        }
-        $responseParameters->set('langFields', $langFields);
-        return $responseParameters;
-    }
     
     public function configureFields(string $pageName): iterable
     {
 
-        return [
+        if($pageName == 'edit' || $pageName == 'new') {
+            $this->fieldService->getEntityData(EvcProduct::class);
+            $langs = $this->fieldService->request->attributes->get('langs');
+            yield FormField::addTab('Basic data');
+            yield ChoiceField::new('prod_active', 'Active')
+                ->hideOnIndex()
+                ->setChoices([
+                    'Yes' => '1',
+                    'No' => '0',
+                ]);
+            yield DateTimeField::new('createdAt', 'Created')
+                ->setDisabled()
+                ->hideOnIndex();
+            yield DateTimeField::new('updatedAt', 'Updated')
+                ->setDisabled()
+                ->hideOnIndex();
+            yield AssociationField::new('prod_category', 'Categories')
+                ->hideOnIndex()
+                ->autocomplete()
+                ->setCrudController(EvcCategoryCrudController::class);
+            yield MoneyField::new('prodPrice', 'Price')
+                ->setSortable(true)
+                ->setCustomOption('currency', 'USD')
+                ->hideOnIndex();
 
-			//edit page
-			ChoiceField::new('prod_active', 'Active')
-				->hideOnIndex()
-				->setChoices([
-					'Yes' => '1',
-					'No' => '0',
-				]),
-			DateTimeField::new('createdAt','Created')
-				->setDisabled()
-				->hideOnIndex(),
-			DateTimeField::new('updatedAt','Updated')
-				->setDisabled()
-				->hideOnIndex(),
-			AssociationField::new('prod_category','Categories')
-				->hideOnIndex()
-				->autocomplete()
-				->setCrudController(EvcCategoryCrudController::class),
+            foreach ($langs as $lang) {
+                $langCode = $lang->getLangCode();
+                yield FormField::addTab("{$lang->getLangName()} data");
+                yield TextField::new("translationData.{$langCode}_prod_name", 'Name')
+                    ->hideOnIndex()
+                    ->setFormTypeOptions([
+                        'block_name' => 'custom_text',
+                    ]);
+                yield TextField::new("translationData.{$langCode}_prod_url", 'Url')
+                    ->hideOnIndex();
+                yield TextEditorField::new("translationData.{$langCode}_prod_description", 'Description')
+                    ->hideOnIndex();
+            }
+        }
 
-			//index page
-            IdField::new('id')
-				->hideOnForm(),
-            UrlField::new('prod_name','Product Name')
-				->setTemplatePath('admin/fields/link_to_edit.html.twig')
-				->setSortable(true)
-				->hideOnForm()
-                ->setFormattedValue(function ($value) {
-                    $data = json_decode($value, true);
-                    return $data['en'];
-                }),
-            BooleanField::new('prod_active', 'Active')
-				->setSortable(true)
-				->hideOnForm(),
-			DateTimeField::new('createdAt','Created')
-				->hideOnForm(),
-			DateTimeField::new('updatedAt','Updated')
-				->hideOnForm(),
+        if($pageName == 'index') {
 
-			//both
-			MoneyField::new('prodPrice','Price')
-				->setSortable(true)
-				->setCustomOption('currency', 'USD')
-        ];
+            //index page
+            yield IdField::new('id')
+                ->hideOnForm();
+            yield UrlField::new('getProdNameDefault', 'Product Name')
+                ->setTemplatePath('admin/fields/link_to_edit.html.twig')
+                ->setSortable(true)
+                ->hideOnForm();
+            yield BooleanField::new('prod_active', 'Active')
+                ->setSortable(true)
+                ->hideOnForm();
+			yield DateTimeField::new('createdAt', 'Created')
+                ->hideOnForm();
+			yield DateTimeField::new('updatedAt', 'Updated')
+                ->hideOnForm();
+            yield MoneyField::new('prodPrice', 'Price')
+                ->setSortable(true)
+                ->setCustomOption('currency', 'USD')
+                ->hideOnForm();
+        }
     }
 
 }

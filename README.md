@@ -15,3 +15,11 @@ This way I can add talwind classes, modify the bacis css and add uniq css code i
 The 1st bigger customization was to show the filters on the index page instead of a modal.
 2nd was to modify the select input elements for tailwind.
 I also removed the sidebar and created a normal header menu.
+for now, these files will need to be added to the easyadmin vendor folder:
+https://mega.nz/file/RaBwzRSR#eQWJJTm2S5pF45Y9ZwI_DcGiS-PdLb8n_a5pnFWwr1c
+### commands to get it up
+```
+symfony console server:start -d
+./node_modules/.bin/encore dev --watch
+npm run watch:css
+```

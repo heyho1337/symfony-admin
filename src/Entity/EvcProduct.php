@@ -51,6 +51,8 @@ class EvcProduct
     #[ORM\Column(type: 'json', nullable: true, options: ["formType" => 'textarea', 'required' => false, 'label' => 'Description'])]
     private ?array $prod_description = [];
 
+    private ?\stdClass $translation_data;
+
 
     public function __construct()
     {
@@ -62,6 +64,18 @@ class EvcProduct
         return $this->id;
     }
 
+    public function getTranslationData(): ?\stdClass
+    {
+        return $this->translation_data;
+    }
+
+    public function setTranslationData(\stdClass $translation_data): static
+    {
+        $this->translation_data = $translation_data;
+
+        return $this;
+    }
+
     public function getProdName(): ?array
     {
         return $this->prod_name;
@@ -70,6 +84,26 @@ class EvcProduct
     public function setProdName(array $prod_name): static
     {
         $this->prod_name = $prod_name;
+
+        return $this;
+    }
+
+    public function getProdNameDefault(): ?string
+    {
+        if(!isset($this->prod_name)){
+            return '';
+        }
+        return $this->prod_name['en'];
+    }
+
+    public function getProdDescription(): ?array
+    {
+        return $this->prod_description;
+    }
+
+    public function setProdDescription(?array $prod_description): static
+    {
+        $this->prod_description = $prod_description;
 
         return $this;
     }
@@ -134,14 +168,31 @@ class EvcProduct
         return $this;
     }
 
-    public function getProdDescription(): ?array
+    public function __toString(): string
     {
-        return $this->prod_description;
+        return $this->prod_name['en']; // Or any other field that provides a meaningful string representation
     }
 
-    public function setProdDescription(?array $prod_description): static
+    public function getProdNameByLang($lang): ?string
     {
-        $this->prod_description = $prod_description;
+        return $this->prod_name[$lang];
+    }
+
+    public function setProdNameByLang(string $translation, string $lang): static
+    {
+        $this->prod_name[$lang] = $translation;
+
+        return $this;
+    }
+
+    public function getProdDescriptionByLang($lang): ?string
+    {
+        return $this->prod_description[$lang];
+    }
+
+    public function setProdDescriptionByLang(string $translation, string $lang): static
+    {
+        $this->prod_description[$lang] = $translation;
 
         return $this;
     }
