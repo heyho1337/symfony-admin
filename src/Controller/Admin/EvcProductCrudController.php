@@ -2,30 +2,29 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\Field\TranslationField;
 use App\Entity\EvcProduct;
+use App\Field\DropzoneField;
+use App\Field\GalleryField;
+use App\Repository\EvcProductRepository;
+use App\Service\FieldService;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Symfony\Component\Form\FormInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\EvcProductRepository;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Service\FieldService;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 class EvcProductCrudController extends AbstractCrudController
 {
 
@@ -68,28 +67,47 @@ class EvcProductCrudController extends AbstractCrudController
 
         if($pageName == 'edit' || $pageName == 'new') {
             $this->fieldService->getEntityData(EvcProduct::class);
+            $date = $this->fieldService->entityInstance->getCreatedAt();
+            $imageFolder = $date->format('Y-m');
+            $imageFolder = "images/product/".$date->format('Y-m');
+            $images = $this->fieldService->entityInstance->getProdImage();
+
             $langs = $this->fieldService->request->attributes->get('langs');
             yield FormField::addTab('Basic data');
-            yield ChoiceField::new('prod_active', 'Active')
-                ->hideOnIndex()
-                ->setChoices([
-                    'Yes' => '1',
-                    'No' => '0',
-                ]);
-            yield DateTimeField::new('createdAt', 'Created')
-                ->setDisabled()
-                ->hideOnIndex();
-            yield DateTimeField::new('updatedAt', 'Updated')
-                ->setDisabled()
-                ->hideOnIndex();
-            yield AssociationField::new('prod_category', 'Categories')
-                ->hideOnIndex()
-                ->autocomplete()
-                ->setCrudController(EvcCategoryCrudController::class);
-            yield MoneyField::new('prodPrice', 'Price')
-                ->setSortable(true)
-                ->setCustomOption('currency', 'USD')
-                ->hideOnIndex();
+                yield ChoiceField::new('prod_active', 'Active')
+                    ->hideOnIndex()
+                    ->setChoices([
+                        'Yes' => '1',
+                        'No' => '0',
+                    ]);
+                yield DateTimeField::new('createdAt', 'Created')
+                    ->setDisabled()
+                    ->hideOnIndex();
+                yield DateTimeField::new('updatedAt', 'Updated')
+                    ->setDisabled()
+                    ->hideOnIndex();
+                yield AssociationField::new('prod_category', 'Categories')
+                    ->hideOnIndex()
+                    ->autocomplete()
+                    ->setCrudController(EvcCategoryCrudController::class);
+                yield MoneyField::new('prodPrice', 'Price')
+                    ->setSortable(true)
+                    ->setCustomOption('currency', 'USD')
+                    ->hideOnIndex();
+
+            yield FormField::addTab('Images');
+                yield GalleryField::new(
+                    'prodImage',
+                    'Images',
+                    $imageFolder,
+                );
+                yield DropzoneField::new(
+                    'prodDefaultImage',
+                    'Drag and drop or browse',
+                    id: $this->fieldService->entityInstance->getId(),
+                    folder: $imageFolder,
+                    entity: 'EvcProduct'
+                );
 
             foreach ($langs as $lang) {
                 $langCode = $lang->getLangCode();

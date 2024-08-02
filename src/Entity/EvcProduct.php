@@ -21,9 +21,9 @@ class EvcProduct
 	use TimestampableEntity;
 
 	#[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
-   	private ?int $id = null;
+             #[ORM\GeneratedValue]
+             #[ORM\Column(options: ["formType" => HiddenType::class, 'required' => true, 'label' => 'Id'])]
+            	private ?int $id = null;
 
     #[Assert\NotBlank]
 	#[ORM\Column(type: 'json',length: 75, options: ["formType" => 'text', 'required' => true, 'label' => 'Name'])]
@@ -45,13 +45,16 @@ class EvcProduct
      * @var Collection<int, EvcCategory>
      */
 	#[Assert\Count(min:1, minMessage: 'Pls choose atleast one category')]
-    #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
-    private Collection $prod_category;
+             #[ORM\ManyToMany(targetEntity: EvcCategory::class, inversedBy: 'categoryProducts')]
+             private Collection $prod_category;
 
     #[ORM\Column(type: 'json', nullable: true, options: ["formType" => 'textarea', 'required' => false, 'label' => 'Description'])]
     private ?array $prod_description = [];
 
     private ?\stdClass $translation_data;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $prod_image = null;
 
 
     public function __construct()
@@ -173,6 +176,11 @@ class EvcProduct
         return $this->prod_name['en']; // Or any other field that provides a meaningful string representation
     }
 
+    public function getProdDefaultImage(): ?string
+    {
+        return $this->prod_image[0];
+    }
+
     public function getProdNameByLang($lang): ?string
     {
         return $this->prod_name[$lang];
@@ -193,6 +201,18 @@ class EvcProduct
     public function setProdDescriptionByLang(string $translation, string $lang): static
     {
         $this->prod_description[$lang] = $translation;
+
+        return $this;
+    }
+
+    public function getProdImage(): ?array
+    {
+        return $this->prod_image;
+    }
+
+    public function setProdImage(?array $prod_image): static
+    {
+        $this->prod_image = $prod_image;
 
         return $this;
     }

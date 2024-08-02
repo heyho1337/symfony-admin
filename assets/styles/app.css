@@ -1,4 +1,4 @@
-@layer easyadmin,tailwind,custom,hover; 
+@layer easyadmin,tailwind,comp,custom,hover;
 
 @import "http://127.0.0.1:8000/bundles/easyadmin/app.19616e33.css" layer(easyadmin);
 @import "./filters.css" layer(custom);

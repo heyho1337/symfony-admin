@@ -1,0 +1,5 @@
+<div class="gallery">
+    {% for image in field.options.images %}
+        <img src="{{ field.options.basePath ~ '/' ~ image }}" alt="{{ image }}" style="max-width: 100px; max-height: 100px; margin: 5px;">
+    {% endfor %}
+</div>

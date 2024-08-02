@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Gedmo\Mapping\Annotation\Slug;
 use App\Form\Type\TextType;
 use App\Form\Type\OnOffType;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,18 +24,18 @@ class EvcCategory
 	private ?int $id = null;
 
     #[Assert\NotBlank]
-	#[ORM\Column(length: 255, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Name'])]
-    private ?string $category_name = null;
+    #[ORM\Column(type: 'json',length: 75, options: ["formType" => 'text', 'required' => true, 'label' => 'Name'])]
+    private ?array $category_name = [];
 
     #[ORM\Column(type: Types::SMALLINT, options: ["formType" => OnOffType::class, 'required' => true, 'label' => 'Active'])]
     private ?int $category_active = null;
 
-    #[Slug(fields: ['category_name'])]
-	#[ORM\Column(length: 100, unique: true, options: ["formType" => TextType::class, 'required' => true, 'label' => 'Url'])]
-    private ?string $slug = null;
+    #[Assert\NotBlank]
+    #[ORM\Column(type: 'json',length: 100, unique: true, options: ["formType" => 'text', 'required' => true, 'label' => 'Url'])]
+    private ?array $category_url = [];
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $category_description = null;
+    #[ORM\Column(type: 'json', nullable: true, options: ["formType" => 'textarea', 'required' => false, 'label' => 'Description'])]
+    private ?array $category_description = [];
 
     /**
      * @var Collection<int, EvcProduct>
@@ -49,13 +48,10 @@ class EvcCategory
     /**
      * @var Collection<int, EvcCategoryTranslation>
      */
-    #[ORM\OneToMany(targetEntity: EvcCategoryTranslation::class, mappedBy: 'category_id')]
-    private Collection $category_translations;
 
     public function __construct()
     {
         $this->categoryProducts = new ArrayCollection();
-        $this->category_translations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -65,15 +61,39 @@ class EvcCategory
 
 	public function __toString(): string
     {
-        return $this->category_name; // Or any other field that provides a meaningful string representation
+        return $this->category_name['en']; // Or any other field that provides a meaningful string representation
     }
 
-    public function getCategoryName(): ?string
+    public function getCategoryNameByLang($lang): ?string
+    {
+        return $this->category_name[$lang];
+    }
+
+    public function setCategoryNameByLang(string $translation, string $lang): static
+    {
+        $this->category_name[$lang] = $translation;
+
+        return $this;
+    }
+
+    public function getCategoryDescriptionByLang($lang): ?string
+    {
+        return $this->category_description[$lang];
+    }
+
+    public function setCategoryDescriptionByLang(string $translation, string $lang): static
+    {
+        $this->category_description[$lang] = $translation;
+
+        return $this;
+    }
+
+    public function getCategoryName(): ?array
     {
         return $this->category_name;
     }
 
-    public function setCategoryName(string $category_name): static
+    public function setCategoryName(array $category_name): static
     {
         $this->category_name = $category_name;
 
@@ -104,14 +124,26 @@ class EvcCategory
         return $this;
     }
 
-    public function getCategoryDescription(): ?string
+    public function getCategoryDescription(): ?array
     {
         return $this->category_description;
     }
 
-    public function setCategoryDescription(?string $category_description): static
+    public function setCategoryDescription(?array $category_description): static
     {
         $this->category_description = $category_description;
+
+        return $this;
+    }
+
+    public function getCategoryUrl(): ?array
+    {
+        return $this->category_url;
+    }
+
+    public function setCategoryUrl(?array $category_url): static
+    {
+        $this->category_url = $category_url;
 
         return $this;
     }
@@ -151,36 +183,6 @@ class EvcCategory
     public function setProductCount(?int $productCount): static
     {
         $this->productCount = $productCount;
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, EvcCategoryTranslation>
-     */
-    public function getCategoryTranslations(): Collection
-    {
-        return $this->category_translations;
-    }
-
-    public function addCategoryTranslation(EvcCategoryTranslation $categoryTranslation): static
-    {
-        if (!$this->category_translations->contains($categoryTranslation)) {
-            $this->category_translations->add($categoryTranslation);
-            $categoryTranslation->setCategoryId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCategoryTranslation(EvcCategoryTranslation $categoryTranslation): static
-    {
-        if ($this->category_translations->removeElement($categoryTranslation)) {
-            // set the owning side to null (unless already changed)
-            if ($categoryTranslation->getCategoryId() === $this) {
-                $categoryTranslation->setCategoryId(null);
-            }
-        }
-
         return $this;
     }
 }

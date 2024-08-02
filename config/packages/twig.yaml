@@ -2,6 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     form_themes:
         - 'admin/fields/text_custom.html.twig'
+        - 'admin/fields/gallery_custom.html.twig'
 when@test:
     twig:
         strict_variables: true

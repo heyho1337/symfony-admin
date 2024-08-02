@@ -14,6 +14,7 @@ use App\Entity\EvcProduct;
 use App\Entity\EvcCategory;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 
+#[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractDashboardController
 {
 

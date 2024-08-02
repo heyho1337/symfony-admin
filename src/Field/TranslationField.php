@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin\Field;
+namespace App\Field;
 
 use A2lix\TranslationFormBundle\Form\Type\TranslationsFormsType;
 use A2lix\TranslationFormBundle\Form\Type\TranslationsType;
