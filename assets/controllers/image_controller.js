@@ -35,7 +35,7 @@ export default class extends Controller {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
+            window.location.reload();
             console.log('Upload successful', response.data);
         } catch (error) {
             console.error('Upload failed', error);

@@ -45,6 +45,20 @@ class EvcCategory
 
 	private ?int $productCount = null;
 
+    private ?\stdClass $translation_data;
+
+    public function getTranslationData(): ?\stdClass
+    {
+        return $this->translation_data;
+    }
+
+    public function setTranslationData(\stdClass $translation_data): static
+    {
+        $this->translation_data = $translation_data;
+
+        return $this;
+    }
+
     /**
      * @var Collection<int, EvcCategoryTranslation>
      */
@@ -91,6 +105,11 @@ class EvcCategory
     public function getCategoryName(): ?array
     {
         return $this->category_name;
+    }
+
+    public function getCategoryNameDefault(): ?string
+    {
+        return $this->category_name['en'];
     }
 
     public function setCategoryName(array $category_name): static

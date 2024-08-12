@@ -3,6 +3,7 @@ namespace App\EventListener;
 
 use App\DTO\EvcProductExtended;
 use App\Entity\EvcProduct;
+use App\Entity\EvcCategory;
 use App\Service\FieldService;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
@@ -24,7 +25,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         protected EntityManagerInterface $entityManager)
     {
         $this->fieldService = new FieldService($this->requestStack,$this->entityManager);
-        $this->fieldService->getEntityData(EvcProduct::class);
+        $this->fieldService->getEntityData();
     }
 
     public static function getSubscribedEvents()
@@ -40,7 +41,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
 
     public function onBeforeEntityUpdate(BeforeEntityUpdatedEvent $event)
     {
-        $formData = $this->fieldService->request->request->all()['EvcProduct'];
+        $formData = $this->fieldService->request->request->all()[$this->fieldService->class];
         foreach ($formData as $key => $value) {
             if (str_contains($key, 'translationData_')) {
                 $fieldNameArray = explode("_", $key);

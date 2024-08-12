@@ -2,13 +2,13 @@
 
 namespace App\Factory;
 
-use App\Entity\EvcLang;
+use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<EvcLang>
+ * @extends PersistentProxyObjectFactory<User>
  */
-final class EvcLangFactory extends PersistentProxyObjectFactory
+final class UserFactory extends PersistentProxyObjectFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
@@ -21,7 +21,7 @@ final class EvcLangFactory extends PersistentProxyObjectFactory
 
     public static function class(): string
     {
-        return EvcLang::class;
+        return User::class;
     }
 
     /**
@@ -32,11 +32,11 @@ final class EvcLangFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'createdAt' => self::faker()->dateTime(),
-            'lang_active' => 1,
-            'lang_code' => 'en',
-            'lang_name' => 'English',
-            'updatedAt' => self::faker()->dateTime(),
+            'email' => self::faker()->text(180),
+            'isVerified' => self::faker()->boolean(),
+            'password' => self::faker()->text(),
+            'roles' => [],
+            'username' => self::faker()->text(255),
         ];
     }
 
@@ -46,7 +46,7 @@ final class EvcLangFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            // ->afterInstantiate(function(EvcLang $evcLang): void {})
+            // ->afterInstantiate(function(User $user): void {})
         ;
     }
 }
